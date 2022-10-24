@@ -134,7 +134,7 @@ Now, I'll show what each of the above values (since each matrix is $1 \times 1$,
 \end{split}
 \end{equation}
 
-Then, $(\A\x)^T \A\x$ is just a simple inner product:
+Then, $(\A\x)^T \A\x$ is just a simple inner product (we will use the result from \ref{eqn:Ax}):
 
 \begin{equation} \label{eqn:axtax}
 \begin{split}
@@ -191,7 +191,7 @@ Then, $(\A\x)^T \A\x$ is just a simple inner product:
         b_0 x_0 + b_1 x_1 + b_2 x_2 + \ldots + b_n x_n \\
         b_0 x_0^2 + b_1 x_1^2 + b_2 x_2^2 + \ldots + b_n x_n^2 \\
         \vdots\\
-        b_0 x_0^m + b_1 x_1^m + b_2 x_2^m + \ldots + b_n x_n^m \\
+        b_0 x_0^m + b_1 x_1^m + b_2 x_2^m + \ldots + b_n x_innern^m \\
     \end{bmatrix} ^T
     \times
     \begin{bmatrix}
@@ -377,6 +377,6 @@ Now we can recall \ref{eqn:rls_prod} and note that to find the minimum of the le
 \end{split}
 \end{equation}
 
-We have now arrived at the equation for Ridge Regression! (We note that there is a typo in the project description for the equation $E_{ridge}=( \A ^T \A + \gamma \I )^{-1} \A ^T$, where there is no trailing $\B$)
+We have now arrived at the equation for Ridge Regression! We note that there is a typo in the project description for the equation $E_{ridge}=( \A ^T \A + \gamma \I )^{-1} \A ^T$, where there is no trailing $\B$.
 
 \end{document}
