@@ -1,0 +1,101 @@
+\documentclass{article}
+
+% Maths
+\usepackage{amsmath}
+
+% Hyperlink
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=cyan,
+    pdfpagemode=FullScreen,
+}
+
+% Title
+\title{Project Proposal}
+\author{Alexey Yermakov\\Logan Barnhart\\Tyler Jensen}
+
+% Figures
+\usepackage{graphics, float, subfig}
+\usepackage[pdflatex]{graphicx}
+
+% Itemize
+\renewcommand{\labelitemi}{\textbullet}
+\renewcommand{\labelitemii}{\textbullet}
+\renewcommand{\labelitemiii}{\textbullet}
+
+% Margins
+\usepackage[margin=1in]{geometry}
+
+% Sections
+\setcounter{secnumdepth}{0}
+
+% Helpful commands
+\newcommand{\x}{\mathbf{x}}
+\newcommand{\A}{\mathbf{A}}
+\newcommand{\B}{\mathbf{b}} % \b already defined
+\newcommand{\I}{\mathbf{I}}
+
+\begin{document}
+
+    \maketitle
+
+    \section{Deadlines}
+
+    We have decided to work on Project 3: Regularization in Least Squares. The various milestones we have to acheive, along with our proposed deadlines, are:
+
+    \begin{itemize}
+        \item 2-page proposal (October 29)
+        \item Rough draft (November 15)
+        \item Final draft (December 14)
+        \item Presentation (December 14)
+    \end{itemize}
+
+    \section{Introductory Material}
+
+    The introductory material for this project includes matrices, unitary matrices, matrix operations, data fitting, and least squares. We will also elaborate on why least squares is useful in the context of noise and data.
+
+    \section{Distribution of Work}
+
+    For the independent part of the project we plan to extend the notion of discrete least squares regularization to regularized continuous least squares.
+
+    In order to meet the project's requirements of having everyone work on each of:
+
+    \begin{itemize}
+        \item Researching
+        \item Writing
+        \item Coding
+        \item Presentation
+    \end{itemize}
+
+    we will assign work in the following way:
+
+    \subsection{Ridge Regression}
+
+    \begin{itemize}
+        \item 2.1.1: Deriving the Ridge Estimator - Alexey (Research)
+        \item 2.1.2: Exploring the Ridge Estimator - Tyler (Coding)
+    \end{itemize}
+
+    \subsection{Tikhonov Regularization}
+
+    \begin{itemize}
+        \item 2.2.1: Show that $\textbf{D}$ is unitary - Tyler (Research)
+        \item 2.2.2: Tikhonov regularization - Logan (Research)
+        \item 2.2.3: Tikhonov modeling - Logan (Coding)
+        \item 2.2.4: Other finite difference method - Alexey (Coding)
+    \end{itemize}
+
+    \subsection{Independent Extension}
+
+    \begin{itemize}
+        \item 3.1: Continuous regularized least squares derivation - Logan (Research)
+        \item 3.2: Analytical example derivation (unregularized + regularized) - Alexey/Logan/Tyler (Research)
+        \item 3.2: Analytical example numerically (unregularized + regularized) - Alexey/Logan/Tyler (Coding)
+    \end{itemize}
+
+    Seeing as how this is a group project, the above assignments aren't strict and group members are encouraged to collaborate with one another.
+
+\end{document}
