@@ -79,10 +79,30 @@
 
     \subsection{Independent Extension}
 
+    For the independent extension we'll explore LASSO and elastic net for the least squares regularization. Whereas we traditionally we can write the least squares problem as:
+
+    \begin{equation*}
+        ||y-X\beta||^{2}_{2} + \lambda_2 ||\beta||_{2}^{2}
+    \end{equation*}
+
+    The LASSO method is similar, except the regularization term has an L1 norm:
+
+    \begin{equation*}
+        ||y-X\beta||^{2}_{2} + \lambda_1 ||\beta||_{1}
+    \end{equation*}
+
+    The elastic net method combines the previos two methods by having both regularization terms in summation:
+
+    \begin{equation*}
+        ||y-X\beta||^{2}_{2} + \lambda_1 ||\beta||_{1} + \lambda_2 ||\beta||_{2}^{2}
+    \end{equation*}
+
+    We'll explore these methods by doing the following:
+
     \begin{itemize}
-        \item 3.1: Continuous regularized least squares derivation - Logan (Research)
-        \item 3.2: Analytical example derivation (unregularized + regularized) - Alexey/Logan/Tyler (Research)
-        \item 3.2: Analytical example numerically (unregularized + regularized) - Alexey/Logan/Tyler (Coding)
+        \item 3.1
+        \item 3.2
+        \item 3.3
     \end{itemize}
 
     Seeing as how this is a group project, the above assignments aren't strict and group members are encouraged to collaborate with one another.
