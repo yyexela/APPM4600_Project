@@ -58,7 +58,7 @@ Recalling that $||\mathbf{x}||_{2}^{2}=\mathbf{x}^T \mathbf{x}$, we'll rewrite $
 \end{split}
 \end{equation*}
 
-Before we proceed further, I'll define what $\A$, $\B$, and $\x$ are. We want a least-squares fit to an $m$-degree polynomial $p_m(x)=a_0+a_1*x+\ldots+a_m*x^m$ where we have $n$ data points $\{x_0,b_0\}$. To have our system be overdetermined, we also assume $n > m$.
+Before we proceed further, we'll define what $\A$, $\B$, and $\x$ are. We want a least-squares fit to an $m$-degree polynomial $p_m(x)=a_0+a_1*x+\ldots+a_m*x^m$ where we have $n$ data points $\{x_0,b_0\}$. To have our system be overdetermined, we also assume $n > m$.
 
 \begin{equation*}
     \A =
@@ -91,7 +91,7 @@ Where $dim(\A)=(n+1)\times(m+1)$, $dim(\x)=(m+1)\times(1)$, and $dim(\B)=(n+1)\t
 
 $ $ %Newline
 
-I'll now prove $\x^T\A^T\B = \B^T\A\x$. Note first that $(\B^T\A\x)^T=\x^T\A^T\B$. Further, $dim(\x^T\A^T\B) = (1) \times (1) = dim(\B^T\A\x)$. Also, note that the transpose of a $1 \times 1$ matrix is the same matrix: $[c]^T=[c]$. It then follows that $\x^T\A^T\B = \B^T\A\x$, completing the proof.
+We'll now prove $\x^T\A^T\B = \B^T\A\x$. Note first that $(\B^T\A\x)^T=\x^T\A^T\B$. Further, $dim(\x^T\A^T\B) = (1) \times (1) = dim(\B^T\A\x)$. Also, note that the transpose of a $1 \times 1$ matrix is the same matrix: $[c]^T=[c]$. It then follows that $\x^T\A^T\B = \B^T\A\x$, completing the proof.
 
 $ $ %Newline
 
@@ -105,7 +105,7 @@ So,
 \end{split}
 \end{equation}
 
-Now, I'll show what each of the above values (since each matrix is $1 \times 1$, meaning it's a scalar) actually is:
+Now, we'll show what each of the above values (since each matrix is $1 \times 1$, meaning it's a scalar) actually is:
 
 \begin{equation} \label{eqn:Ax}
 \begin{split}
