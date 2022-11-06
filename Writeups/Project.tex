@@ -381,4 +381,89 @@ Now we can recall \ref{eqn:rls_prod} and note that to find the minimum of the le
 
 We have now arrived at the equation for Ridge Regression! We note that there is a typo in the project description for the equation $E_{ridge}=( \A ^T \A + \gamma \I )^{-1} \A ^T$, where there is no trailing $\B$.
 
+\subsection{Exploring the Ridge Estimator}
+
+Now that we have derived the Ridge Estimator, we are now ready to implement and test the Ridge Estimator on some data. All code is in python 3, numpy's random generator with seed 
+50 was used to generate any random data. 
+We begin by taking 20 random samples from the line $y = 3x + 2$ on the interval $[-5, 5)$
+with Gaussian noise from a standard normal $\sim N(0,1)$ distribution. We now randomly sample 10 of these data points and will use them to build
+the line of best fit (find $m$ and $c$ in $y = mx + b$) for this sample using ridge regression. We will refer to these data points as training data, and the remaining 10 points will be 
+referred to as our validation data and will be used to measure the accuracy of the model using Residual Sum of Squares(also known as Sum of Squared Errors).
+
+\includegraphics[scale = 0.8]{2a_sample_data.png}
+
+\begin{align}
+    RSS = \sum_{n = 1}^{N}(y_{valid, n} - y_{predict, n})^2
+\end{align}
+
+where $y_{valid}$ is the $y$ values of the validation data, and $y_{predict}$ are the predicted $y$ values for the validation data using
+the ridge regression model trained from our training data, and $N$ is the total number of samples that we are predicting for(In this case, 10).
+
+
+From (?) we know that $E_{ridge} = ( \A ^T \A + \gamma \I )^{-1} \A ^T \B$. The $A$ matrix for this model is 
+\begin{equation*}
+    \A =
+    \begin{bmatrix}
+        1 & x_{train, 1} \\
+        1 & x_{train, 2} \\
+        1 & x_{train, 3} \\ 
+        \vdots & \vdots \\
+        1 & x_{train, 10} \\
+    \end{bmatrix}
+    \B =
+    \begin{bmatrix}
+        y_{train, 1} \\
+        y_{train, 2} \\
+        y_{train, 3} \\ 
+        \vdots  \\
+        y_{train, 10} \\
+    \end{bmatrix}
+    \x* =
+    \begin{bmatrix}
+        b \\
+        m \\
+    \end{bmatrix}
+\end{equation*}
+
+We first start with $\gamma = 0$. In that case, the ridge 
+estimator reduces to $E_{ridge} = ( \A ^T \A)^{-1} \A ^T \B$ which is just the normal 
+equation for standard non penalized least squares. We thus try $\gamma = 0.1$ as well, for our
+first real "ridge" regression. -We get the following $RSS$ 
+
+\begin{center}
+    \begin{tabular}{||c || c | c ||}
+        \hline
+        $\gamma$ & 0 & 0.1 \\
+        \hline
+        $RSS$ & & \\
+        \hline
+        
+    \end{tabular}
+\end{center}
+
+We see that we have a lower $RSS$ with $\gamma = 0.1$ rather than $\gamma = 0$. Thus we have already produced a result better than 
+non penalized least squares! We have already found a situation where ridge regression is more accurate than non penalized regression.
+Now the question is are there any other $\gamma$'s where ridge regression performs better than standard least squares? What is the best $\gamma$?
+There is no analytic way to determine the best $\gamma$, so we try a lot of $\gamma$'s and see what happens. First we try 
+$\gamma = 0.1, 0.2, 0.3, 0.4, \hdots 10,000$. 
+
+
+From the graph above we see that the $\gamma$'s with the best $RSS$ are in the interval
+$[0,10]$. Thus we now try $\gamma = 0, 0.01, 0.02, 0.03, 0.04, \hdots, 10$
+
+We found minimum $RSS$ to occur at $\gamma = 1$. 
+
+We next move on to using ridge regression for higher degree polynomials. We consider the model 
+
+\begin{equation}
+    y = ax^5 + bx^4 + cx^3 + dx^2 + ex + f
+\end{equation}
+
+and we will fit $y = x^2$ using the same process as we did for finding the line of best fit. We sample 20 points on the interval $[-5,5)$, take 10 to be our 
+training data, and 10 to be our validation data, with Gaussian noise from a standard normal added in. We get the following plot
+
+
+
+
+
 \end{document}
