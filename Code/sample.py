@@ -6,9 +6,7 @@ def random_sample(number_of_samples, f, a, b, number_of_train_samples, mean = 0,
     rng = np.random.default_rng(seed)
     sample_x = rng.uniform(a,b, (number_of_samples, 1))
     gaussian_noise = rng.normal(mean, std_dev, (number_of_samples, 1))
-    print(f(sample_x))
     sample_y = f(sample_x) + gaussian_noise
-    print(sample_y)
     sample_x_y = np.concatenate((sample_x, sample_y), axis = 1)
 
     train_data = rng.choice(sample_x_y, size = number_of_train_samples, replace = False) 
