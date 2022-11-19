@@ -134,4 +134,4 @@ def test_D_2():
     plt.show()
 
 #test_D_1()
-test_D_2()
+#test_D_2()

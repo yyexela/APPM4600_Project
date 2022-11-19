@@ -31,11 +31,11 @@ class ridge:
 
 class tikhonov:
   ## Weights needs to be a list that will work for implementation of finite_diff.py
-  def __init__(self, lambda, degree, weights):
-    self.lambda = lambda
+  def __init__(self, _lambda, degree, weights):
+    self._lambda = _lambda
     self.degree = degree
     self.xstar = None
-    self.weight_matrix = finite_diff.generate_D(weights)
+    self.weight_matrix = weights
 	
   def construct_A(self, in_x):
     A = np.ones((in_x.shape[0], self.degree + 1))
@@ -47,7 +47,7 @@ class tikhonov:
     A = self.construct_A(train_x)
     b = train_y
     D = self.weight_matrix
-    self.xstar = np.linalg.inv((np.transpose(A) @ A + self.lambda**2 * np.transpose(D) @ D)) @ np.transpose(A) @ b
+    self.xstar = np.linalg.inv((np.transpose(A) @ A + self._lambda**2 * np.transpose(D) @ D)) @ np.transpose(A) @ b
  
   def predict(self, test_x):
     A_test = self.construct_A(test_x)
@@ -57,4 +57,4 @@ class tikhonov:
   def RSS(self, test_x, test_y):
     b_hat = self.predict(test_x)
     rss = np.sum(np.power((b_hat - test_y), 2))
-  return rss
+    return rss

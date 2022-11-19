@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import estimators
+import finite_diff
 
 ## Generating training / testing data
 
@@ -16,10 +17,10 @@ y_test = f(x_test)
 
 xeval = np.linspace(-5, 5, 1000)
 feval = f(xeval)
-degree = 1
-weights = [(0,1) for i in range(num_train_samples)]
-lambda = .2
-tikhonov = estimators.tikhonov(lambda, degree, weights)
-tikhonov.fit(x_train, y_train_)
-
-
+degree = 10
+weights = finite_diff.generate_centered_D(degree+1)
+lam = .2
+tikhonov = estimators.tikhonov(lam, degree, weights)
+tikhonov.fit(x_train, y_train)
+RSS = tikhonov.RSS(x_test,y_test)
+print(RSS)
