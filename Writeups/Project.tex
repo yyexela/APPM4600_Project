@@ -30,6 +30,7 @@
 \newcommand{\A}{\mathbf{A}}
 \newcommand{\B}{\mathbf{b}} % \b already defined
 \newcommand{\I}{\mathbf{I}}
+\newcommand{\D}{\mathbf{D}}
 
 \begin{document}
 
@@ -380,5 +381,188 @@ Now we can recall \ref{eqn:rls_prod} and note that to find the minimum of the le
 \end{equation}
 
 We have now arrived at the equation for Ridge Regression! We note that there is a typo in the project description for the equation $E_{ridge}=( \A ^T \A + \gamma \I )^{-1} \A ^T$, where there is no trailing $\B$.
+
+\section{Tikhonov Regression}
+We can further generalize the loss function used for Ridge Regression if we notice that:
+
+
+\begin{align*}
+\arg \min_{x} ||\A\x-\B||_{2}^{2} + \gamma||\x||_{2}^{2} \\
+\end{align*}
+
+
+is equivalent to 
+
+
+\begin{align*}
+\arg \min_{x} ||\A\x-\B||_{2}^{2} + ||\sigma \I \x||_{2}^{2} \\
+\end{align*}
+
+where $\sigma = \sqrt{\gamma}$. We can generalize this by replacing $\sigma \I $ with various other \emph{weight matrices} to 'focus' the penalization on certain qualities or terms of $\x$. 
+
+For example, we can use forward differences to estimate the derivative of a vector by using the matrix:
+
+\begin{align*}
+  \D = \begin{bmatrix}
+    -\frac{1}{2} & 0 & \frac{1}{2} & 0 & \dots & 0 \\
+    0 & -\frac{1}{2} & 0 & \frac{1}{2} & 0 & \vdots \\
+    \vdots & 0 & \ddots & \ddots & \ddots & 0 \\
+    0 & \dots & 0 & -\frac{1}{2} & 0 & \frac{1}{2} \\ 
+  \end{bmatrix}\\
+\end{align*}
+
+Note that $\D$ is $(n-2) \times n $. If we put this in our loss function, it becomes: 
+
+\begin{align*}
+\arg \min_{x} ||\A\x-\B||_{2}^{2} + \lambda^2||\D \x||_{2}^{2} \\
+\end{align*}
+
+Where $\lambda$ is just a general weighting constant to control how much we want to penalize that last term. Now instead of just penalizing the magnitude of $\x$, we are penalizing its derivative - or in other words, forcing the resulting polynomial to be smooth. This will obviously change the solution of our estimator to solve the above loss function. 
+
+
+\subsection{Deriving the Tikhonov Estimator}
+
+As we saw when deriving the ridge estimator, to find this estimator we want to solve
+
+\begin{align*}
+\frac{d}{d\x} \left[ ||\A\x-\B||_{2}^{2} + \lambda^2||\D \x||_{2}^{2} \right] = 0 \\
+\end{align*}
+or, if we expand that similar to the loss function for ridge estimation, 
+
+\begin{align*}
+\frac{d}{d\x} \left[ (\A\x)^T(\A\x) -2 \B^T \A\x + \B^T \B + \lambda^2(\D\x)^{\textrm{T}}(\D\x) \right] = 0 \\
+\end{align*}
+
+From the ridge estimator derivation we already know that 
+\begin{align*}
+\frac{d}{d\x} [ (\A\x)^{\textrm{T}} \A\x ] = 2\A^{\textrm{T}}\A\x \\
+\frac{d}{d\x} [ (2\B^{\textrm{T}} \A\x ] = 2\A^{\textrm{T}}\B
+\end{align*}
+
+So what is $\frac{d}{d\x} [ (\D\x)^{\textrm{T}}\D\x ] $? Well, 
+
+\begin{align*}
+  \D\x &= \begin{bmatrix}
+    -\frac{1}{2} & 0 & \frac{1}{2} & 0 & \dots & 0 \\
+    0 & -\frac{1}{2} & 0 & \frac{1}{2} & 0 & \vdots \\
+    \vdots & 0 & \ddots & \ddots & \ddots & 0 \\
+    0 & \dots & 0 & -\frac{1}{2} & 0 & \frac{1}{2} \\ 
+  \end{bmatrix} 
+  \begin{bmatrix}
+  a_0 \\
+  a_1 \\
+  \vdots \\
+  a_n
+  \end{bmatrix} \\\\
+  &= \frac{1}{2}\begin{bmatrix}
+  a_2 - a_0 \\ 
+  a_3 - a_1 \\ 
+  a_4 - a_2 \\
+  \vdots \\
+  a_n - a_{n-2}
+  \end{bmatrix}
+\end{align*}
+
+So it follows that
+
+\begin{align*}
+  &(\D\x)^{\textrm{T}}(\D\x) = 
+  \begin{bmatrix}
+  \frac{a_2 - a_0}{2} \\ 
+  \frac{a_3 - a_1}{2} \\ 
+  \frac{a_4 - a_2}{2} \\
+  \vdots \\
+  \frac{a_n - a_{n-2}}{2}
+  \end{bmatrix} ^ {\textrm{T}}
+   \begin{bmatrix}
+  \frac{a_2 - a_0}{2} \\ 
+  \frac{a_3 - a_1}{2} \\ 
+  \frac{a_4 - a_2}{2} \\
+  \vdots \\
+  \frac{a_n - a_{n-2}}{2}
+  \end{bmatrix} \\\\
+  &= \left( \frac{(a_2 - a_0)^2}{4} + \frac{(a_3 - a_1)^2}{4} + \dots \frac{(a_n - a_{n-2})^2}{4} \right)
+\end{align*}
+
+Then it follows that 
+
+\begin{align*}
+\frac{d}{d\x} \left[ (\D\x)^{\textrm{T}}(\D\x) \right] = 
+\begin{bmatrix}
+- \frac{a_2 - a_0}{2} \\\\
+- \frac{a_3 - a_2}{2} \\\\
+\frac{a_2 - a_0}{2} - \frac{a_4 - a_2}{2}\\
+\vdots \\
+\frac{a_{n-2} - a_{n-4}}{2} - \frac{a_n - a_{n-2}}{2}\\\\
+\frac{a_{n-1} - a_{n-3}}{2} \\\\
+\frac{a_n - a_n-2}{2}
+\end{bmatrix}
+\end{align*}
+
+This initially doesn't seem like anything useful, but note that
+
+\begin{align*}
+\D^{\textrm{T}}\D\x &= 
+\begin{bmatrix}
+  -\frac{1}{2} & 0  & 0 & \dots & 0\\
+  0 & -\frac{1}{2} & 0  & \dots & 0 \\
+  \frac{1}{2} & 0 & \ddots   & \dots & 0 \\
+  0 & \frac{1}{2} & 0  & -\frac{1}{2}  & 0\\
+  \vdots & 0 & \ddots & 0& -\frac{1}{2} \\
+  0 & \dots & 0 & \frac{1}{2} & 0 \\
+  0 & \dots & 0 & 0 & \frac{1}{2}
+\end{bmatrix}
+\begin{bmatrix}
+\frac{a_2 - a_0}{2} \\
+\frac{a_3 - a_1}{2} \\
+\vdots \\
+\frac{a_n - a_{n-2}}{2} \\
+\end{bmatrix} \\ \\
+&= 
+\begin{bmatrix}
+-\frac{a_2 - a_0}{4} \\\\
+-\frac{a_3 - a_1}{4} \\\\
+\frac{a_2 - a_0}{4} - \frac{a_4 - a_2}{4} \\\\
+\vdots \\
+\frac{a_{n-2} - a_{n-4}}{4} - \frac{a_n - a_{n-2}}{4}\\\\
+\frac{a_{n-1} - a_{n-3}}{4} \\\\
+\frac{a_n - a_n-2}{4}
+\end{bmatrix}
+\end{align*}
+So, it's true that 
+\begin{align*}
+\frac{d}{d\x} \left[ (\D\x)^{\textrm{T}}(\D\x) \right] = 2\D^{\textrm{T}}\D\x\\
+\end{align*}
+
+Finally we can solve for the $\x$ that satisfies
+
+\begin{align*}
+\frac{d}{d\x} \left[||\A\x-\B||_{2}^{2} + \lambda^2||\D \x||_{2}^{2} \right] = 0 \\
+\end{align*}
+or,
+\begin{align*}
+ 2\A^{\textrm{T}}\A\x - 2\A^{\textrm{T}}\B + 2\lambda^2 \D^{\textrm{T}}\D\x = 0 \\
+ \A^{\textrm{T}}\A\x - \A^{\textrm{T}}\B + \lambda^2 \D^{\textrm{T}}\D\x = 0 \\
+ \A^{\textrm{T}}\A\x  + \lambda^2 \D^{\textrm{T}}\D\x = \A^{\textrm{T}}\B\\
+  (\A^{\textrm{T}}\A  + \lambda^2 \D^{\textrm{T}}\D)\x = \A^{\textrm{T}}\B\\
+\end{align*}
+Thus
+\begin{align*}
+\x = (\A^{\textrm{T}}\A  + \lambda^2 \D^{\textrm{T}}\D)^{-1}\A^{\textrm{T}}\B\\
+\end{align*}
+
+Generally speaking, a loss function with weight matrix $\mathbf{\Gamma}$ of the form
+
+\begin{align*}
+\arg \min_{x}||\A\x-\B||_{2}^{2} + ||\textbf{$\Gamma$} \x||_{2}^{2}
+\end{align*}
+
+will be solved by 
+
+\begin{align*}
+\x = (\A^{\textrm{T}}\A  + \mathbf{\Gamma}^{\textrm{T}}\mathbf{\Gamma})^{-1}\A^{\textrm{T}}\B\\
+\end{align*}
+
+but weight matrices can be customized to such a degree that it's best to verify this property for each case. 
 
 \end{document}
