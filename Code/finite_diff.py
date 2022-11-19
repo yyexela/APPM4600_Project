@@ -12,12 +12,13 @@ def generate_D(FD_list):
     A matrix `D` with the values filled in from `FD_list`
 
     finite difference (FD) options for various strides (N): \n
-    0: centered difference            `f'(x) ~   (f(x-N)-f(x-N))/(2*N)`
-    1: forward difference             `f'(x) ~   (f(x+N) - f(x))/N`
-    2: backward difference            `f'(x) ~   (f(x) - f(x-N))/N`
-    3: centered difference 2nd order  `f''(x) ~  (f(x+N)-2*f(x)+f(x-N))/N**2`
-    4: forward difference 2nd order   `f''(x) ~  (f(x+2*N)-2*f(x+N)+f(x))/N**2`
-    5: backward difference 2nd order  `f''(x) ~  (f(x)-2*f(x-N)+f(x-2*N))/N**2`
+    0: empty row
+    1: centered difference            `f'(x) ~   (f(x-N)-f(x-N))/(2*N)`
+    2: forward difference             `f'(x) ~   (f(x+N) - f(x))/N`
+    3: backward difference            `f'(x) ~   (f(x) - f(x-N))/N`
+    4: centered difference 2nd order  `f''(x) ~  (f(x+N)-2*f(x)+f(x-N))/N**2`
+    5: forward difference 2nd order   `f''(x) ~  (f(x+2*N)-2*f(x+N)+f(x))/N**2`
+    6: backward difference 2nd order  `f''(x) ~  (f(x)-2*f(x-N)+f(x-2*N))/N**2`
     '''
 
     # Size of our D matrix
@@ -72,45 +73,65 @@ def _get_FD(FD, N):
     if N < 1 or not isinstance(N, int):
         raise Exception(f"get_FD: N ({N}) must be a positive integer")
     
-    if FD not in [0,1,2,3,4,5]:
-        raise Exception(f"get_FD: FD ({FD}) must be an integer in [0,5]")
+    if FD not in [0,1,2,3,4,5,6]:
+        raise Exception(f"get_FD: FD ({FD}) must be an integer in [0,6]")
 
     if FD == 0:
+        ret = np.zeros(0)
+        return (ret, 0)
+    if FD == 1:
         ret = np.zeros(2*N+1)
         ret[0] = -1/(2*N)
         ret[-1] = 1/(2*N)
         return (ret, N)
-    if FD == 1 or FD == 2:
+    if FD == 2 or FD == 3:
         # Row is the same, but its position changes on the method
         ret = np.zeros(N+1)
         ret[0] = -1/(N)
         ret[-1] = 1/(N)
 
-        if FD == 1:
+        if FD == 2:
             return (ret, 0)
         else:
             return (ret, N)
-    if FD == 3 or FD == 4 or FD == 5:
+    if FD == 4 or FD == 5 or FD == 6:
         # Row is the same, but its position changes on the method
         ret = np.zeros(2*N+1)
         ret[-1] = 1/(N**2)
         ret[N] = -2/(N**2)
         ret[0] = 1/(N**2)
 
-        if FD == 3:
+        if FD == 4:
             return (ret, N)
-        elif FD == 4:
+        elif FD == 5:
             return (ret, 0)
         else:
             return (ret, 2*N)
 
-def test_D():
+def generate_centered_D(N):
+    N -= 2
+    FD_list = [(0, 1)] + [(1,1)]*N + [(0, 1)]
+    D = generate_D(FD_list)
+    D = D[1:-1]
+    return D
+
+def test_D_1():
     '''
     Test function to make sure D is created properly
     '''
-    FD_list = [(1, 1), (0, 1), (0, 1), (5, 1), (3, 1), (4, 1), (0, 1), (0, 1), (2, 1)]
+    FD_list = [(0, 1), (1, 1), (1, 1), (6, 1), (4, 1), (5, 1), (1, 1), (1, 1), (0, 1)]
     D = generate_D(FD_list)
     plt.matshow(D)
     plt.show()
 
-test_D()
+def test_D_2():
+    '''
+    Test function to make sure D is created properly
+    '''
+    N = 5
+    D = generate_centered_D(N)
+    plt.matshow(D)
+    plt.show()
+
+#test_D_1()
+test_D_2()
