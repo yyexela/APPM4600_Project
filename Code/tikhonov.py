@@ -14,6 +14,7 @@ def visualize(fig, func):
     
   # visualize tikhonov estimator
   if fig == 1:
+    seed = 50
     x_train, y_train, x_test, y_test = random_sample_equi(2*num_train_samples, func, -3, 3, num_train_samples, seed = seed, std_dev = .7)
     xeval = np.linspace(-3,3,1000)
     feval = func(xeval)
@@ -33,9 +34,10 @@ def visualize(fig, func):
     plt.show()
   
   #RSS Values vs lambda for a specific seed
-  if fig == 2:   
+  if fig == 2:
+    seed = 50   
     x_train, y_train, x_test, y_test = random_sample_equi(2*num_train_samples, func, -3, 3, num_train_samples, seed = seed, std_dev = .7) 
-    lambdas = np.linspace(0, 20, 100)
+    lambdas = np.linspace(0, 20, 1000)
     degree = 11
     weights = finite_diff.generate_centered_D(degree + 1)
     RSS_vals = []
@@ -49,6 +51,7 @@ def visualize(fig, func):
 
   #RSS values vs degree for specific seed
   if fig == 3:
+    seed = 50
     x_train, y_train, x_test, y_test = random_sample_equi(2*num_train_samples, func, -3, 3, num_train_samples, seed = seed, std_dev = .7)
     degrees = range(3, 20)
     lam = .1
@@ -64,11 +67,11 @@ def visualize(fig, func):
 
   #RSS Values for various seeds
   if fig == 4:
-    seeds = np.random.randint(0, 1000, 100)
+    seeds = range(1,101)
     seeds = sorted(list(set(seeds)))
     for seed in seeds:
       x_train, y_train, x_test, y_test = random_sample_equi(2*num_train_samples, func, -3, 3, num_train_samples, seed = seed, std_dev = .7)
-      lambdas = np.linspace(0, 20, 100)
+      lambdas = np.linspace(0, 20, 1000)
       degree = 11
       weights = finite_diff.generate_centered_D(degree + 1)
       RSS_vals = []
@@ -78,8 +81,12 @@ def visualize(fig, func):
         RSS_vals += [tikhonov.RSS(x_test, y_test)]
       plt.plot(lambdas, RSS_vals, alpha = .3)
 
+    plt.semilogy()
     plt.title('RSS values vs $\lambda$ for 100 random seeds')
     plt.show()
 
 f = lambda x : np.sin(x) + np.sin(5*x)
+visualize(1, f)
+visualize(2, f)
+visualize(3, f)
 visualize(4, f)
