@@ -13,8 +13,9 @@ seed = 50
 color1 = '#FF595E'
 color2 = '#1982C4'
 color3 = '#6A4C93'
+fname = '$sin(x) + sin(5x)$'
 
-def visualize(fig, func):
+def visualize(fig, func, func_name):
     
   # visualize tikhonov estimator
   if fig == 1:
@@ -30,9 +31,11 @@ def visualize(fig, func):
     coefs = tikhonov.xstar
     b_hat = tikhonov.predict(x_test) 
     poly = tikhonov.predict(xeval)
-    plt.plot(xeval, poly, label = '$x^*$', color = color2) 
-    plt.plot(x_train, y_train, '.', label = 'train data', color = color3)
-    plt.plot(xeval, feval, label = 'f(x)', color = color1)
+    plt.plot(xeval, poly, label = 'Tikhonov Polynomial', color = color2) 
+    plt.plot(x_train, y_train, '.', label = 'Training data', color = color3)
+    plt.plot(xeval, feval, label = 'f(x) = ' + func_name, color = color1)
+    plt.xlabel('x')
+    plt.ylabel('y')
     plt.legend()
     plt.show()
   
@@ -50,6 +53,8 @@ def visualize(fig, func):
       RSS_vals += [tikhonov.RSS(x_test, y_test)]
     plt.plot(lambdas, RSS_vals, color = color2)
     plt.title('RSS values for $\lambda \in [0, 20]$')
+    plt.xlabel('$\lambda$')
+    plt.ylabel('RSS')
     plt.show()  
 
   #RSS values vs degree for specific seed
@@ -65,7 +70,9 @@ def visualize(fig, func):
       tikhonov.fit(x_train, y_train)
       RSS_vals += [tikhonov.RSS(x_test, y_test)]
     plt.plot(degrees, RSS_vals, color = color2)
-    plt.title('RSS vs Degree of $x$')
+    plt.title('RSS vs Degree of beta')
+    plt.xlabel('Degree')
+    plt.ylabel('RSS')
     plt.show()
 
   #RSS Values for various seeds
@@ -76,7 +83,7 @@ def visualize(fig, func):
     for seed in seeds:
       x_train, y_train, x_test, y_test = random_sample_equi(2*num_train_samples, func, -3, 3, num_train_samples, seed = seed, std_dev = .7)
       lambdas = np.linspace(0, 20, 1000)
-      degree = 11
+      degree = 15
       weights = finite_diff.generate_centered_D(degree + 1)
       RSS_vals = []
       minRSS = float('inf')
@@ -93,7 +100,9 @@ def visualize(fig, func):
       plt.plot(lambdas, RSS_vals, alpha = .3)
 
     plt.semilogy()
-    plt.title('RSS values vs $\lambda$ for 100 random seeds')
+    plt.xlabel('$\lambda$')
+    plt.ylabel('RSS')
+    plt.title('RSS values vs $\lambda$ for 100 seeds')
     plt.show()
     nonzero = np.count_nonzero(best_lambdas)
     zero = len(best_lambdas) - nonzero
@@ -134,8 +143,8 @@ def visualize(fig, func):
 
 
 f = lambda x : np.sin(x) + np.sin(5*x)
-#visualize(1, f)
-#visualize(2, f)
-#visualize(3, f)
-#visualize(4, f)
-visualize(5, f)
+visualize(1, f, fname)
+visualize(2, f, fname)
+visualize(3, f, fname)
+visualize(4, f, fname)
+visualize(5, f, fname)
