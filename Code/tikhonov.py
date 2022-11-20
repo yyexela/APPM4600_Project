@@ -114,9 +114,9 @@ def visualize(fig, func):
     plt.fill_between(lambdas, means-stdevs,\
                     means+stdevs,\
                     color="red", alpha=0.25, edgecolor=None, label="Stdev")
-    plt.matshow(y_evals)
     plt.legend()
     plt.show()
+    plt.close()
 
 
 f = lambda x : np.sin(x) + np.sin(5*x)
