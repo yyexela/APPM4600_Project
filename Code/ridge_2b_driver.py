@@ -9,7 +9,7 @@ a = -5
 b = 5
 number_of_samples = 20
 number_of_train_samples = 10
-seed = 80
+seed = 50
 
 #get random sample, and divide into training and validation data
 train_x, train_y, valid_x, valid_y = sample.random_sample_equi(number_of_samples, f, a, b, number_of_train_samples, seed = seed)
