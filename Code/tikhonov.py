@@ -99,8 +99,43 @@ def visualize(fig, func):
     zero = len(best_lambdas) - nonzero
     print(f'Number of seeds where 0 is the best lambda: {zero} \n Number of seeds where best lambda is nonzero: {nonzero}')
 
+  #RSS values for various seeds as a single statistical function
+  if fig == 5:
+    seeds = range(1,101)
+    seeds = sorted(list(set(seeds)))
+
+    num_lambdas = 100
+    degree = 11
+    weights = finite_diff.generate_centered_D(degree + 1)
+    lambdas = np.linspace(0, 20, num_lambdas)
+    y_evals = np.zeros((len(seeds),num_lambdas))
+
+    for i in range(len(seeds)):
+      seed = seeds[i]
+      x_train, y_train, x_test, y_test = random_sample_equi(2*num_train_samples, func, -3, 3, num_train_samples, seed = seed, std_dev = .7)
+      RSS_vals = []
+      for j in range(len(lambdas)):
+        l = lambdas[j]
+        tikhonov = estimators.tikhonov(l, degree, weights)
+        tikhonov.fit(x_train, y_train)
+        RSS_val = tikhonov.RSS(x_test,y_test)
+        y_evals[i][j] = RSS_val
+      
+    means = np.mean(y_evals,axis=0)
+    stdevs = np.std(y_evals,axis=0)
+    
+    plt.plot(lambdas, means, color="red", label="Mean")
+    plt.fill_between(lambdas, means-stdevs,\
+                    means+stdevs,\
+                    color="red", alpha=0.25, edgecolor=None, label="Stdev")
+    plt.legend()
+    plt.show()
+    plt.close()
+
+
 f = lambda x : np.sin(x) + np.sin(5*x)
-visualize(1, f)
-visualize(2, f)
-visualize(3, f)
-visualize(4, f)
+#visualize(1, f)
+#visualize(2, f)
+#visualize(3, f)
+#visualize(4, f)
+visualize(5, f)
