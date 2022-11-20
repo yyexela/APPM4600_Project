@@ -1,7 +1,7 @@
 import numpy as np 
 import matplotlib.pyplot as plt
 import estimators 
-from sample import random_sample
+import sample
 
 #no interval is given of where to sample f, choose [-5, 5)
 f = lambda x: 3*x + 2
@@ -9,13 +9,24 @@ a = -5
 b = 5
 number_of_samples = 20
 number_of_train_samples = 10
-seed = 50
+seed = 78
 
 #get random sample, and divide into training and validation data
-train_x, train_y, valid_x, valid_y = random_sample(number_of_samples, f, a, b, number_of_train_samples, seed = seed)
-
-
+train_x, train_y, valid_x, valid_y = sample.random_sample_equi(number_of_samples, f, a, b, number_of_train_samples, seed = seed)
 xeval = np.linspace(-5,5,1000)
+
+
+fig_data, ax_data = plt.subplots(1,1)
+ax_data.plot(train_x, train_y,'.', label = 'Training Data')
+ax_data.plot(valid_x, valid_y,'.', label = 'Validation Data')
+ax_data.plot(xeval, f(xeval), label = 'f(x) = 3x + 2')
+ax_data.legend()
+ax_data.set_title('Training and Validation Data')
+ax_data.set_xlabel('x')
+ax_data.set_ylabel('y')
+plt.show()
+
+
 degree = 1
 gammas_initial = [0,0.1]
 fig_initial, ax_initial = plt.subplots(1,1)
@@ -27,6 +38,7 @@ for gamma in gammas_initial:
     ax_initial.plot(xeval, ridge.predict(xeval), label = 'gamma = ' + str(gamma))
 ax_initial.plot(xeval, f(xeval), label = 'f(x) = 3x + 2')
 ax_initial.legend()
+print(rss_initial)
 plt.show()
 
 
@@ -57,4 +69,20 @@ ax_fine.set_xlabel('gamma')
 ax_fine.set_ylabel('Residual Sum of Squares')
 plt.show()
 
+fig_final, ax_final = plt.subplots(1,1)
+ax_final.plot(xeval, f(xeval), label = 'f(x) = 3x + 2')
+ridge = estimators.ridge(gamma = 0, degree = degree)
+ridge.fit(train_x, train_y)
+ax_final.plot(xeval, ridge.predict(xeval),'--', label = '\gamma = 0')
+ridge = estimators.ridge(gammas_fine[np.argmin(rss_fine)], degree)
+ridge.fit(train_x, train_y)
+ax_final.plot(xeval, ridge.predict(xeval),'--', label = '\gamma = ' + str(gammas_fine[np.argmin(rss_fine)]))
+ax_final.legend()
+ax_final.set_title('Models for actual function, no regularization, and best \gamma')
+ax_final.set_xlabel('x')
+ax_final.set_ylabel('y')
+plt.show()
+
+
 print('The best gamma is ' + str(gammas_fine[np.argmin(rss_fine)]))
+print('With RSS of ' + str(np.min(rss_fine)))
