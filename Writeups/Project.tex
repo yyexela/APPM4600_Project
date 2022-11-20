@@ -27,8 +27,10 @@
 
 % Helpful commands
 \newcommand{\x}{\mathbf{x}}
+\newcommand{\y}{\mathbf{y}}
+\newcommand{\X}{\mathbf{X}}
 \newcommand{\A}{\mathbf{A}}
-\newcommand{\B}{\mathbf{b}} % \b already defined
+\newcommand{\B}{\boldsymbol\beta} % \b already defined
 \newcommand{\I}{\mathbf{I}}
 \newcommand{\D}{\mathbf{D}}
 
@@ -44,25 +46,25 @@ Alexey Yermakov, Logan Barnhart, and Tyler Jensen
 The equation for regularized least squares is:
 
 \begin{equation} \label{eqn:rls}
-    \arg \min_{x} ||\A\x-\B||_{2}^{2} + \gamma||\x||_{2}^{2}
+    \arg \min_{\B} ||\X\B-\y||_{2}^{2} + \gamma||\B||_{2}^{2}
 \end{equation}
 
-Recalling that $||\mathbf{x}||_{2}^{2}=\mathbf{x}^T \mathbf{x}$, we'll rewrite $||\mathbf{Ax}-\mathbf{b}||_{2}^{2} + \gamma||\mathbf{x}||_{2}^{2}$:
+Recalling that $||\B||_{2}^{2}=\B^T \B$, we'll rewrite $||\X\B-\y||_{2}^{2} + \gamma||\B||_{2}^{2}$:
 
 \begin{equation*}
 \begin{split}
-    & ||\A\x-\B||_{2}^{2} + \gamma||\x||_{2}^{2} =\\
-    & =  (\A\x - \B)^T (\A\x - \B) + \gamma \x^T \x \\ 
-    & =  ((\A\x)^T - \B^T) (\A\x - \B) + \gamma \x^T \x \\ 
-    & =  (\x^T\A^T - \B^T) (\A\x - \B) + \gamma \x^T \x \\ 
-    & = \x^T \A^T \A\x - \x^T \A^T \B - \B^T \A\x + \B^T \B + \gamma \x^T \x
+    & ||\X\B-\y||_{2}^{2} + \gamma||\B||_{2}^{2} =\\
+    & =  (\X\B - \y)^T (\X\B - \y) + \gamma \B^T \B \\ 
+    & =  ((\X\B)^T - \y^T) (\X\B - \y) + \gamma \B^T \B \\ 
+    & =  (\B^T\X^T - \y^T) (\X\B - \y) + \gamma \B^T \B \\ 
+    & = \B^T \X^T \X\B - \B^T \X^T \y - \y^T \X\B + \y^T \y + \gamma \B^T \B
 \end{split}
 \end{equation*}
 
-Before we proceed further, we'll define what $\A$, $\B$, and $\x$ are. We want a least-squares fit to an $m$-degree polynomial $p_m(x)=a_0+a_1*x+\ldots+a_m*x^m$ where we have $n$ data points $\{x_0,b_0\}$. To have our system be overdetermined, we also assume $n > m$.
+Before we proceed further, we'll define what $\X$, $\y$, and $\B$ are. We want a least-squares fit to an $m$-degree polynomial $p_m(x)=\beta_0+\beta_1*x+\ldots+\beta_m*x^m$ where we have $n$ data points $\{x_0,y_0\}$. To have our system be overdetermined, we also assume $n > m$.
 
 \begin{equation*}
-    \A =
+    \X =
     \begin{bmatrix}
         1 & x_0 & x_0 ^2 & \ldots & x_0^m \\
         1 & x_1 & x_1 ^2 & \ldots & x_1^m \\
@@ -71,28 +73,28 @@ Before we proceed further, we'll define what $\A$, $\B$, and $\x$ are. We want a
         1 & x_n & x_n ^n & \ldots & x_n^m \\
     \end{bmatrix}
     \quad
-    \x =
-    \begin{bmatrix}
-        a_0\\
-        a_1\\
-        \vdots\\
-        a_m
-    \end{bmatrix}
-    \quad
     \B =
     \begin{bmatrix}
-        b_0\\
-        b_1\\
+        \beta_0\\
+        \beta_1\\
         \vdots\\
-        b_n
+        \beta_m
+    \end{bmatrix}
+    \quad
+    \y =
+    \begin{bmatrix}
+        y_0\\
+        y_1\\
+        \vdots\\
+        y_n
     \end{bmatrix}
 \end{equation*}
 
-Where $dim(\A)=(n+1)\times(m+1)$, $dim(\x)=(m+1)\times(1)$, and $dim(\B)=(n+1)\times(1)$.
+Where $dim(\X)=(n+1)\times(m+1)$, $dim(\B)=(m+1)\times(1)$, and $dim(\y)=(n+1)\times(1)$.
 
 $ $ %Newline
 
-We'll now prove $\x^T\A^T\B = \B^T\A\x$. Note first that $(\B^T\A\x)^T=\x^T\A^T\B$. Further, $dim(\x^T\A^T\B) = (1) \times (1) = dim(\B^T\A\x)$. Also, note that the transpose of a $1 \times 1$ matrix is the same matrix: $[c]^T=[c]$. It then follows that $\x^T\A^T\B = \B^T\A\x$, completing the proof.
+We'll now prove $\B^T\X^T\y = \y^T\X\B$. Note first that $(\y^T\X\B)^T=\B^T\X^T\y$. Further, $dim(\B^T\X^T\y) = (1) \times (1) = dim(\y^T\X\B)$. Also, note that the transpose of a $1 \times 1$ matrix is the same matrix: $[c]^T=[c]$. It then follows that $\B^T\X^T\y = \y^T\X\B$, completing the proof.
 
 $ $ %Newline
 
@@ -100,9 +102,9 @@ So,
 
 \begin{equation} \label{eqn:rls_prod}
 \begin{split}
-    &\x^T \A^T \A\x - \x^T \A^T \B - \B^T \A\x + \B^T \B + \gamma \x^T \x = \\ 
-    & = \x^T \A^T \A\x -2 \B^T \A\x + \B^T \B + \gamma \x^T \x\\
-    & = (\A\x)^T(\A\x) -2 \B^T \A\x + \B^T \B + \gamma \x^T \x
+    &\B^T \X^T \X\B - \B^T \X^T \y - \y^T \X\B + \y^T \y + \gamma \B^T \B = \\ 
+    & = \B^T \X^T \X\B -2 \y^T \X\B + \y^T \y + \gamma \B^T \B\\
+    & = (\X\B)^T(\X\B) -2 \y^T \X\B + \y^T \y + \gamma \B^T \B
 \end{split}
 \end{equation}
 
@@ -110,7 +112,7 @@ Now, we'll show what each of the above values (since each matrix is $1 \times 1$
 
 \begin{equation} \label{eqn:Ax}
 \begin{split}
-    & \A\x = \\
+    & \X\B = \\
     & =
     \begin{bmatrix}
         1 & x_0 & x_0 ^2 & \ldots & x_0^m \\
@@ -121,57 +123,57 @@ Now, we'll show what each of the above values (since each matrix is $1 \times 1$
     \end{bmatrix}
     \times
     \begin{bmatrix}
-        a_0\\
-        a_1\\
+        \beta_0\\
+        \beta_1\\
         \vdots\\
-        a_m
+        \beta_m
     \end{bmatrix}\\
     & =
     \begin{bmatrix}
-        a_0 + a_1 x_0 + a_2 x_0 ^2 + \ldots + a_m x_0^m \\
-        a_0 + a_1 x_1 + a_2 x_1 ^2 + \ldots + a_m x_1^m \\
-        a_0 + a_1 x_2 + a_2 x_2 ^2 + \ldots + a_m x_2^m \\
+        \beta_0 + \beta_1 x_0 + \beta_2 x_0 ^2 + \ldots + \beta_m x_0^m \\
+        \beta_0 + \beta_1 x_1 + \beta_2 x_1 ^2 + \ldots + \beta_m x_1^m \\
+        \beta_0 + \beta_1 x_2 + \beta_2 x_2 ^2 + \ldots + \beta_m x_2^m \\
         \vdots \\
-        a_0 + a_1 x_n + a_2 x_n ^2 + \ldots + a_m x_n^m \\
+        \beta_0 + \beta_1 x_n + \beta_2 x_n ^2 + \ldots + \beta_m x_n^m \\
     \end{bmatrix}
 \end{split}
 \end{equation}
 
-Then, $(\A\x)^T \A\x$ is just a simple inner product (we will use the result from \ref{eqn:Ax}):
+Then, $(\X\B)^T \X\B$ is just a simple inner product (we will use the result from \ref{eqn:Ax}):
 
 \begin{equation} \label{eqn:axtax}
 \begin{split}
-    & (\A\x)^T \A\x = \\
+    & (\X\B)^T \X\B = \\
     & =
     \begin{bmatrix}
-        a_0 + a_1 x_0 + a_2 x_0 ^2 + \ldots + a_m x_0^m \\
-        a_0 + a_1 x_1 + a_2 x_1 ^2 + \ldots + a_m x_1^m \\
-        a_0 + a_1 x_2 + a_2 x_2 ^2 + \ldots + a_m x_2^m \\
+        \beta_0 + \beta_1 x_0 + \beta_2 x_0 ^2 + \ldots + \beta_m x_0^m \\
+        \beta_0 + \beta_1 x_1 + \beta_2 x_1 ^2 + \ldots + \beta_m x_1^m \\
+        \beta_0 + \beta_1 x_2 + \beta_2 x_2 ^2 + \ldots + \beta_m x_2^m \\
         \vdots \\
-        a_0 + a_1 x_n + a_2 x_n ^2 + \ldots + a_m x_n^m \\
+        \beta_0 + \beta_1 x_n + \beta_2 x_n ^2 + \ldots + \beta_m x_n^m \\
     \end{bmatrix} ^T
     \times
     \begin{bmatrix}
-        a_0 + a_1 x_0 + a_2 x_0 ^2 + \ldots + a_m x_0^m \\
-        a_0 + a_1 x_1 + a_2 x_1 ^2 + \ldots + a_m x_1^m \\
-        a_0 + a_1 x_2 + a_2 x_2 ^2 + \ldots + a_m x_2^m \\
+        \beta_0 + \beta_1 x_0 + \beta_2 x_0 ^2 + \ldots + \beta_m x_0^m \\
+        \beta_0 + \beta_1 x_1 + \beta_2 x_1 ^2 + \ldots + \beta_m x_1^m \\
+        \beta_0 + \beta_1 x_2 + \beta_2 x_2 ^2 + \ldots + \beta_m x_2^m \\
         \vdots \\
-        a_0 + a_1 x_n + a_2 x_n ^2 + \ldots + a_m x_n^m \\
+        \beta_0 + \beta_1 x_n + \beta_2 x_n ^2 + \ldots + \beta_m x_n^m \\
     \end{bmatrix} \\
-    & = (a_0 + a_1 x_0 + \ldots + a_m x_0^m)^ 2 + (a_0 + a_1 x_1 + \ldots + a_m x_1^m)^ 2\\
-    & + \ldots + (a_0 + a_1 x_n + \ldots + a_m x_n^m)^ 2
+    & = (\beta_0 + \beta_1 x_0 + \ldots + \beta_m x_0^m)^ 2 + (\beta_0 + \beta_1 x_1 + \ldots + \beta_m x_1^m)^ 2\\
+    & + \ldots + (\beta_0 + \beta_1 x_n + \ldots + \beta_m x_n^m)^ 2
 \end{split}
 \end{equation}
 
 \begin{equation} \label{eqn:2bax}
 \begin{split}
-    & 2 \B ^T \A \x = \\
+    & 2 \y ^T \X \B = \\
     & = 2 \times
     \begin{bmatrix}
-        b_0 &
-        b_1 &
+        y_0 &
+        y_1 &
         \ldots & 
-        b_n
+        y_n
     \end{bmatrix}
     \times
     \begin{bmatrix}
@@ -183,65 +185,65 @@ Then, $(\A\x)^T \A\x$ is just a simple inner product (we will use the result fro
     \end{bmatrix}
     \times
     \begin{bmatrix}
-        a_0\\
-        a_1\\
+        \beta_0\\
+        \beta_1\\
         \vdots\\
-        a_m
+        \beta_m
     \end{bmatrix}\\
     & = 2 \times
     \begin{bmatrix}
-        b_0 + b_1 + b_2 + \ldots + b_n \\
-        b_0 x_0 + b_1 x_1 + b_2 x_2 + \ldots + b_n x_n \\
-        b_0 x_0^2 + b_1 x_1^2 + b_2 x_2^2 + \ldots + b_n x_n^2 \\
+        y_0 + y_1 + y_2 + \ldots + y_n \\
+        y_0 x_0 + y_1 x_1 + y_2 x_2 + \ldots + y_n x_n \\
+        y_0 x_0^2 + y_1 x_1^2 + y_2 x_2^2 + \ldots + y_n x_n^2 \\
         \vdots\\
-        b_0 x_0^m + b_1 x_1^m + b_2 x_2^m + \ldots + b_n x_n^m \\
+        y_0 x_0^m + y_1 x_1^m + y_2 x_2^m + \ldots + y_n x_n^m \\
     \end{bmatrix} ^T
     \times
     \begin{bmatrix}
-        a_0\\
-        a_1\\
+        \beta_0\\
+        \beta_1\\
         \vdots\\
-        a_m
+        \beta_m
     \end{bmatrix}\\
-    & = 2(a_0 (b_0 + b_1 + \ldots + b_n) + a_1 (b_0 x_0 + b_1 x_1 + \ldots + b_n x_n) + \ldots + a_m (b_0 x_0^m + b_1 x_1^m + \ldots + b_n x_n^m))
+    & = 2(\beta_0 (y_0 + y_1 + \ldots + y_n) + \beta_1 (y_0 x_0 + y_1 x_1 + \ldots + y_n x_n) + \ldots + \beta_m (y_0 x_0^m + y_1 x_1^m + \ldots + y_n x_n^m))
 \end{split}
 \end{equation}
 
 \begin{equation} \label{eqn:gxx}
 \begin{split}
-    & \gamma \x ^T \x = \\
+    & \gamma \B ^T \B = \\
     & \text{This is a simple inner product multiplied by a scalar} \\
-    & = \gamma a_0 ^2 + \gamma a_1 ^2 + \ldots + \gamma a_m^2
+    & = \gamma \beta_0 ^2 + \gamma \beta_1 ^2 + \ldots + \gamma \beta_m^2
 \end{split}
 \end{equation}
 
-Great! Now lets take the derivates of \ref{eqn:axtax}, \ref{eqn:2bax}, and \ref{eqn:gxx} with respect to $\x$ to get the derivative of \ref{eqn:rls} with respect to $\x$. In effect, we'll get a vector where the $i$-th element is the derivative of \ref{eqn:rls} with respect to $a_i$.
+Great! Now lets take the derivates of \ref{eqn:axtax}, \ref{eqn:2bax}, and \ref{eqn:gxx} with respect to $\B$ to get the derivative of \ref{eqn:rls} with respect to $\B$. In effect, we'll get a vector where the $i$-th element is the derivative of \ref{eqn:rls} with respect to $\beta_i$.
 
 First, let's take the derivatives of \ref{eqn:axtax}:
 
 \begin{equation}
 \begin{split}
-    & \frac{d}{d\x} (\A\x)^T \A\x = \\
+    & \frac{d}{d\B} (\X\B)^T \X\B = \\
     & =
     \begin{bmatrix}
-        \frac{d}{d a_0} (\A\x)^T \A\x \\
-        \frac{d}{d a_1} (\A\x)^T \A\x \\
+        \frac{d}{d \beta_0} (\X\B)^T \X\B \\
+        \frac{d}{d \beta_1} (\X\B)^T \X\B \\
         \vdots \\
-        \frac{d}{d a_m} (\A\x)^T \A\x \\
+        \frac{d}{d \beta_m} (\X\B)^T \X\B \\
     \end{bmatrix}\\
     & =
     \begin{bmatrix}
-        2(a_0 + a_1 x_0 + \dots + a_m x_0 ^ m) + 2(a_0 + a_1 x_1 + \dots + a_m x_1 ^ m) + \ldots + 2(a_0 + a_1 x_n + \dots + a_m x_n ^ m)\\
-        2 x_0(a_0 + a_1 x_0 + \dots + a_m x_0 ^ m) + 2 x_1(a_0 + a_1 x_1 + \dots + a_m x_1 ^ m) + \ldots + 2 x_n(a_0 + a_1 x_n + \dots + a_m x_n ^ m)\\
+        2(\beta_0 + \beta_1 x_0 + \dots + \beta_m x_0 ^ m) + 2(\beta_0 + \beta_1 x_1 + \dots + \beta_m x_1 ^ m) + \ldots + 2(\beta_0 + \beta_1 x_n + \dots + \beta_m x_n ^ m)\\
+        2 x_0(\beta_0 + \beta_1 x_0 + \dots + \beta_m x_0 ^ m) + 2 x_1(\beta_0 + \beta_1 x_1 + \dots + \beta_m x_1 ^ m) + \ldots + 2 x_n(\beta_0 + \beta_1 x_n + \dots + \beta_m x_n ^ m)\\
         \vdots \\
-        2 x_0^m(a_0 + a_1 x_0 + \dots + a_m x_0 ^ m) + 2 x_1^m(a_0 + a_1 x_1 + \dots + a_m x_1 ^ m) + \ldots + 2 x_n^m(a_0 + a_1 x_n + \dots + a_m x_n ^ m)
+        2 x_0^m(\beta_0 + \beta_1 x_0 + \dots + \beta_m x_0 ^ m) + 2 x_1^m(\beta_0 + \beta_1 x_1 + \dots + \beta_m x_1 ^ m) + \ldots + 2 x_n^m(\beta_0 + \beta_1 x_n + \dots + \beta_m x_n ^ m)
     \end{bmatrix}\\
     & = 2 \times
     \begin{bmatrix}
-        a_0 \sum_{i=0}^{n} 1 + a_1 \sum_{i=0}^{n} x_i + a_2 \sum_{i=0}^{n} x_i^2 + \ldots + a_m \sum_{i=0}^{n} x_i ^ m\\
-        a_0 \sum_{i=0}^{n} x_i + a_1 \sum_{i=0}^{n} x_i^2 + a_2 \sum_{i=0}^{n} x_i^3 + \ldots + a_m \sum_{i=0}^{n} x_i ^ {m+1}\\
+        \beta_0 \sum_{i=0}^{n} 1 + \beta_1 \sum_{i=0}^{n} x_i + \beta_2 \sum_{i=0}^{n} x_i^2 + \ldots + \beta_m \sum_{i=0}^{n} x_i ^ m\\
+        \beta_0 \sum_{i=0}^{n} x_i + \beta_1 \sum_{i=0}^{n} x_i^2 + \beta_2 \sum_{i=0}^{n} x_i^3 + \ldots + \beta_m \sum_{i=0}^{n} x_i ^ {m+1}\\
         \vdots \\
-        a_0 \sum_{i=0}^{n} x_i^m + a_1 \sum_{i=0}^{n} x_i^{m+1} + a_2 \sum_{i=0}^{n} x_i^{m+2} + \ldots + a_m \sum_{i=0}^{n} x_i ^ {2m}\\
+        \beta_0 \sum_{i=0}^{n} x_i^m + \beta_1 \sum_{i=0}^{n} x_i^{m+1} + \beta_2 \sum_{i=0}^{n} x_i^{m+2} + \ldots + \beta_m \sum_{i=0}^{n} x_i ^ {2m}\\
     \end{bmatrix}\\
     & = 2 \times
     \begin{bmatrix}
@@ -253,11 +255,11 @@ First, let's take the derivatives of \ref{eqn:axtax}:
     \end{bmatrix}
     \times
     \begin{bmatrix}
-        a_0 \\
-        a_1 \\
-        a_2 \\
+        \beta_0 \\
+        \beta_1 \\
+        \beta_2 \\
         \vdots \\
-        a_m
+        \beta_m
     \end{bmatrix}\\
     & = 2 \times
     \begin{bmatrix}
@@ -277,13 +279,13 @@ First, let's take the derivatives of \ref{eqn:axtax}:
     \end{bmatrix}
     \times
     \begin{bmatrix}
-        a_0 \\
-        a_1 \\
-        a_2 \\
+        \beta_0 \\
+        \beta_1 \\
+        \beta_2 \\
         \vdots \\
-        a_m
+        \beta_m
     \end{bmatrix}\\
-    &= 2\A ^T \A \x
+    &= 2\X ^T \X \B
 \end{split}
 \end{equation}
 
@@ -291,21 +293,21 @@ Secondly, let's take the derivatives of \ref{eqn:2bax}:
 
 \begin{equation}
 \begin{split}
-    & \frac{d}{d\x} 2 \B ^T \A \x = \\
+    & \frac{d}{d\B} 2 \y ^T \X \B = \\
     & =
     \begin{bmatrix}
-        \frac{d}{d a_0} 2 \B ^T \A \x \\
-        \frac{d}{d a_1} 2 \B ^T \A \x \\
+        \frac{d}{d a_0} 2 \y ^T \X \B \\
+        \frac{d}{d a_1} 2 \y ^T \X \B \\
         \vdots \\
-        \frac{d}{d a_m} 2 \B ^T \A \x \\
+        \frac{d}{d a_m} 2 \y ^T \X \B \\
     \end{bmatrix}\\
     & = 2 \times
     \begin{bmatrix}
-        b_0 + b_1 + \ldots + b_n \\
-        b_0x_0 + b_1x_1 + \ldots + b_nx_n \\
-        b_0x_0^2 + b_1x_1^2 + \ldots + b_nx_n^2 \\
+        y_0 + y_1 + \ldots + y_n \\
+        y_0x_0 + y_1x_1 + \ldots + y_nx_n \\
+        y_0x_0^2 + y_1x_1^2 + \ldots + y_nx_n^2 \\
         \vdots \\
-        b_0x_0^m + b_1x_1^m + \ldots + b_nx_n^m \\
+        y_0x_0^m + y_1x_1^m + \ldots + y_nx_n^m \\
     \end{bmatrix}\\
     &= 2 \times
     \begin{bmatrix}
@@ -317,12 +319,12 @@ Secondly, let's take the derivatives of \ref{eqn:2bax}:
     \end{bmatrix}
     \times
     \begin{bmatrix}
-        b_0\\
-        b_1\\
+        y_0\\
+        y_1\\
         \vdots\\
-        b_n
+        y_n
     \end{bmatrix}\\
-    &= 2 \A ^T \B
+    &= 2 \X ^T \y
 \end{split}
 \end{equation}
 
@@ -330,21 +332,21 @@ Lastly, let's take the derivatives of \ref{eqn:gxx}:
 
 \begin{equation}
 \begin{split}
-    & \frac{d}{d\x} \gamma \x^T \x = \\
+    & \frac{d}{d\B} \gamma \B^T \B = \\
     & =
     \begin{bmatrix}
-        \frac{d}{d a_0} \gamma \x^T \x \\
-        \frac{d}{d a_1} \gamma \x^T \x \\
+        \frac{d}{d \beta_0} \gamma \B^T \B \\
+        \frac{d}{d \beta_1} \gamma \B^T \B \\
         \vdots \\
-        \frac{d}{d a_m} \gamma \x^T \x \\
+        \frac{d}{d \beta_m} \gamma \B^T \B \\
     \end{bmatrix}\\
     &= \gamma \times
     \begin{bmatrix}
-        2 a_0 \\
-        2 a_1 \\
-        2 a_2 \\
+        2 \beta_0 \\
+        2 \beta_1 \\
+        2 \beta_2 \\
         \vdots \\
-        2 a_m
+        2 \beta_m
     \end{bmatrix}\\
     &= 2 \times \gamma \times
     \begin{bmatrix}
@@ -356,13 +358,13 @@ Lastly, let's take the derivatives of \ref{eqn:gxx}:
     \end{bmatrix}
     \times
     \begin{bmatrix}
-        a_0 \\
-        a_1 \\
-        a_2 \\
+        \beta_0 \\
+        \beta_1 \\
+        \beta_2 \\
         \vdots \\
-        a_m
+        \beta_m
     \end{bmatrix}\\
-    &= 2 \gamma \I \x
+    &= 2 \gamma \I \B
 \end{split}
 \end{equation}
 
@@ -370,24 +372,24 @@ Now we can recall \ref{eqn:rls_prod} and note that to find the minimum of the le
 
 \begin{equation}
 \begin{split}
-    \frac{d}{d \x} (\frac{}{}(\A\x)^T(\A\x) -2 \B^T \A\x + \B^T \B + \gamma \x^T \x) &= 0 \\
-    2 \A ^T \A \x - 2 \A ^T \B + 2 \gamma \I \x &= 0 \\
-    \A ^T \A \x - \A ^T \B + \gamma \I \x &= 0 \\
-    \A ^T \A \x + \gamma \I \x - \A ^T \B &= 0 \\
-    ( \A ^T \A + \gamma \I ) \x - \A ^T \B &= 0 \\
-    ( \A ^T \A + \gamma \I ) \x  &= \A ^T \B \\
-    \x &= ( \A ^T \A + \gamma \I )^{-1} \A ^T \B  \\
+    \frac{d}{d \B} (\frac{}{}(\X\B)^T(\X\B) -2 \y^T \X\B + \y^T \y + \gamma \B^T \B) &= 0 \\
+    2 \X ^T \X \B - 2 \X ^T \y + 2 \gamma \I \B &= 0 \\
+    \X ^T \X \B - \X ^T \y + \gamma \I \B &= 0 \\
+    \X ^T \X \B + \gamma \I \B - \X ^T \y &= 0 \\
+    ( \X ^T \X + \gamma \I ) \B - \X ^T \y &= 0 \\
+    ( \X ^T \X + \gamma \I ) \B  &= \X ^T \y \\
+    \B &= ( \X ^T \X + \gamma \I )^{-1} \X ^T \y  \\
 \end{split}
 \end{equation}
 
-We have now arrived at the equation for Ridge Regression! We note that there is a typo in the project description for the equation $E_{ridge}=( \A ^T \A + \gamma \I )^{-1} \A ^T$, where there is no trailing $\B$.
+We have now arrived at the equation for Ridge Regression! We note that there is a typo in the project description for the equation $E_{ridge}=( \X ^T \X + \gamma \I )^{-1} \X ^T$, where there is no trailing $\y$.
 
 \section{Tikhonov Regression}
 We can further generalize the loss function used for Ridge Regression if we notice that:
 
 
 \begin{align*}
-\arg \min_{x} ||\A\x-\B||_{2}^{2} + \gamma||\x||_{2}^{2} \\
+\arg \min_{x} ||\X\B-\y||_{2}^{2} + \gamma||\B||_{2}^{2} \\
 \end{align*}
 
 
@@ -395,10 +397,10 @@ is equivalent to
 
 
 \begin{align*}
-\arg \min_{x} ||\A\x-\B||_{2}^{2} + ||\sigma \I \x||_{2}^{2} \\
+\arg \min_{x} ||\X\B-\y||_{2}^{2} + ||\sigma \I \B||_{2}^{2} \\
 \end{align*}
 
-where $\sigma = \sqrt{\gamma}$. We can generalize this by replacing $\sigma \I $ with various other \emph{weight matrices} to 'focus' the penalization on certain qualities or terms of $\x$. 
+where $\sigma = \sqrt{\gamma}$. We can generalize this by replacing $\sigma \I $ with various other \emph{weight matrices} to 'focus' the penalization on certain qualities or terms of $\B$. 
 
 For example, we can use forward differences to estimate the derivative of a vector by using the matrix:
 
@@ -414,10 +416,10 @@ For example, we can use forward differences to estimate the derivative of a vect
 Note that $\D$ is $(n-2) \times n $. If we put this in our loss function, it becomes: 
 
 \begin{align*}
-\arg \min_{x} ||\A\x-\B||_{2}^{2} + \lambda^2||\D \x||_{2}^{2} \\
+\arg \min_{x} ||\X\B-\y||_{2}^{2} + \lambda^2||\D \B||_{2}^{2} \\
 \end{align*}
 
-Where $\lambda$ is just a general weighting constant to control how much we want to penalize that last term. Now instead of just penalizing the magnitude of $\x$, we are penalizing its derivative - or in other words, forcing the resulting polynomial to be smooth. This will obviously change the solution of our estimator to solve the above loss function. 
+Where $\lambda$ is just a general weighting constant to control how much we want to penalize that last term. Now instead of just penalizing the magnitude of $\B$, we are penalizing its derivative - or in other words, forcing the resulting polynomial to be smooth. This will obviously change the solution of our estimator to solve the above loss function. 
 
 \subsection{Exploring the Ridge Estimator}
 
@@ -450,84 +452,84 @@ Now we want to try and fit our data to the model $y = $. We try a similar approa
 As we saw when deriving the ridge estimator, to find this estimator we want to solve
 
 \begin{align*}
-\frac{d}{d\x} \left[ ||\A\x-\B||_{2}^{2} + \lambda^2||\D \x||_{2}^{2} \right] = 0 \\
+\frac{d}{d\B} \left[ ||\X\B-\y||_{2}^{2} + \lambda^2||\D \B||_{2}^{2} \right] = 0 \\
 \end{align*}
 or, if we expand that similar to the loss function for ridge estimation, 
 
 \begin{align*}
-\frac{d}{d\x} \left[ (\A\x)^T(\A\x) -2 \B^T \A\x + \B^T \B + \lambda^2(\D\x)^{\textrm{T}}(\D\x) \right] = 0 \\
+\frac{d}{d\B} \left[ (\X\B)^T(\X\B) -2 \y^T \X\B + \y^T \y + \lambda^2(\D\B)^{\textrm{T}}(\D\B) \right] = 0 \\
 \end{align*}
 
 From the ridge estimator derivation we already know that 
 \begin{align*}
-\frac{d}{d\x} [ (\A\x)^{\textrm{T}} \A\x ] = 2\A^{\textrm{T}}\A\x \\
-\frac{d}{d\x} [ (2\B^{\textrm{T}} \A\x ] = 2\A^{\textrm{T}}\B
+\frac{d}{d\B} [ (\X\B)^{\textrm{T}} \X\B ] = 2\X^{\textrm{T}}\X\B \\
+\frac{d}{d\B} [ (2\y^{\textrm{T}} \X\B ] = 2\X^{\textrm{T}}\y
 \end{align*}
 
-So what is $\frac{d}{d\x} [ (\D\x)^{\textrm{T}}\D\x ] $? Well, 
+So what is $\frac{d}{d\B} [ (\D\B)^{\textrm{T}}\D\B ] $? Well, 
 
 \begin{align*}
-  \D\x &= \begin{bmatrix}
+  \D\B &= \begin{bmatrix}
     -\frac{1}{2} & 0 & \frac{1}{2} & 0 & \dots & 0 \\
     0 & -\frac{1}{2} & 0 & \frac{1}{2} & 0 & \vdots \\
     \vdots & 0 & \ddots & \ddots & \ddots & 0 \\
     0 & \dots & 0 & -\frac{1}{2} & 0 & \frac{1}{2} \\ 
   \end{bmatrix} 
   \begin{bmatrix}
-  a_0 \\
-  a_1 \\
+  \beta_0 \\
+  \beta_1 \\
   \vdots \\
-  a_n
+  \beta_n
   \end{bmatrix} \\\\
   &= \frac{1}{2}\begin{bmatrix}
-  a_2 - a_0 \\ 
-  a_3 - a_1 \\ 
-  a_4 - a_2 \\
+  \beta_2 - \beta_0 \\ 
+  \beta_3 - \beta_1 \\ 
+  \beta_4 - \beta_2 \\
   \vdots \\
-  a_n - a_{n-2}
+  \beta_n - \beta_{n-2}
   \end{bmatrix}
 \end{align*}
 
 So it follows that
 
 \begin{align*}
-  &(\D\x)^{\textrm{T}}(\D\x) = 
+  &(\D\B)^{\textrm{T}}(\D\B) = 
   \begin{bmatrix}
-  \frac{a_2 - a_0}{2} \\ 
-  \frac{a_3 - a_1}{2} \\ 
-  \frac{a_4 - a_2}{2} \\
+  \frac{\beta_2 - \beta_0}{2} \\ 
+  \frac{\beta_3 - \beta_1}{2} \\ 
+  \frac{\beta_4 - \beta_2}{2} \\
   \vdots \\
-  \frac{a_n - a_{n-2}}{2}
+  \frac{\beta_n - \beta_{n-2}}{2}
   \end{bmatrix} ^ {\textrm{T}}
    \begin{bmatrix}
-  \frac{a_2 - a_0}{2} \\ 
-  \frac{a_3 - a_1}{2} \\ 
-  \frac{a_4 - a_2}{2} \\
+  \frac{\beta_2 - \beta_0}{2} \\ 
+  \frac{\beta_3 - \beta_1}{2} \\ 
+  \frac{\beta_4 - \beta_2}{2} \\
   \vdots \\
-  \frac{a_n - a_{n-2}}{2}
+  \frac{\beta_n - \beta_{n-2}}{2}
   \end{bmatrix} \\\\
-  &= \left( \frac{(a_2 - a_0)^2}{4} + \frac{(a_3 - a_1)^2}{4} + \dots \frac{(a_n - a_{n-2})^2}{4} \right)
+  &= \left( \frac{(\beta_2 - \beta_0)^2}{4} + \frac{(\beta_3 - \beta_1)^2}{4} + \dots \frac{(\beta_n - \beta_{n-2})^2}{4} \right)
 \end{align*}
 
 Then it follows that 
 
 \begin{align*}
-\frac{d}{d\x} \left[ (\D\x)^{\textrm{T}}(\D\x) \right] = 
+\frac{d}{d\B} \left[ (\D\B)^{\textrm{T}}(\D\B) \right] = 
 \begin{bmatrix}
-- \frac{a_2 - a_0}{2} \\\\
-- \frac{a_3 - a_2}{2} \\\\
-\frac{a_2 - a_0}{2} - \frac{a_4 - a_2}{2}\\
+- \frac{\beta_2 - \beta_0}{2} \\\\
+- \frac{\beta_3 - \beta_2}{2} \\\\
+\frac{\beta_2 - \beta_0}{2} - \frac{\beta_4 - \beta_2}{2}\\
 \vdots \\
-\frac{a_{n-2} - a_{n-4}}{2} - \frac{a_n - a_{n-2}}{2}\\\\
-\frac{a_{n-1} - a_{n-3}}{2} \\\\
-\frac{a_n - a_n-2}{2}
+\frac{\beta_{n-2} - \beta_{n-4}}{2} - \frac{\beta_n - \beta_{n-2}}{2}\\\\
+\frac{\beta_{n-1} - \beta_{n-3}}{2} \\\\
+\frac{\beta_n - \beta_n-2}{2}
 \end{bmatrix}
 \end{align*}
 
 This initially doesn't seem like anything useful, but note that
 
 \begin{align*}
-\D^{\textrm{T}}\D\x &= 
+\D^{\textrm{T}}\D\B &= 
 \begin{bmatrix}
   -\frac{1}{2} & 0  & 0 & \dots & 0\\
   0 & -\frac{1}{2} & 0  & \dots & 0 \\
@@ -538,54 +540,54 @@ This initially doesn't seem like anything useful, but note that
   0 & \dots & 0 & 0 & \frac{1}{2}
 \end{bmatrix}
 \begin{bmatrix}
-\frac{a_2 - a_0}{2} \\
-\frac{a_3 - a_1}{2} \\
+\frac{\beta_2 - \beta_0}{2} \\
+\frac{\beta_3 - \beta_1}{2} \\
 \vdots \\
-\frac{a_n - a_{n-2}}{2} \\
+\frac{\beta_n - \beta_{n-2}}{2} \\
 \end{bmatrix} \\ \\
 &= 
 \begin{bmatrix}
--\frac{a_2 - a_0}{4} \\\\
--\frac{a_3 - a_1}{4} \\\\
-\frac{a_2 - a_0}{4} - \frac{a_4 - a_2}{4} \\\\
+-\frac{\beta_2 - \beta_0}{4} \\\\
+-\frac{\beta_3 - \beta_1}{4} \\\\
+\frac{\beta_2 - \beta_0}{4} - \frac{\beta_4 - \beta_2}{4} \\\\
 \vdots \\
-\frac{a_{n-2} - a_{n-4}}{4} - \frac{a_n - a_{n-2}}{4}\\\\
-\frac{a_{n-1} - a_{n-3}}{4} \\\\
-\frac{a_n - a_n-2}{4}
+\frac{\beta_{n-2} - \beta_{n-4}}{4} - \frac{\beta_n - \beta_{n-2}}{4}\\\\
+\frac{\beta_{n-1} - \beta_{n-3}}{4} \\\\
+\frac{\beta_n - \beta_n-2}{4}
 \end{bmatrix}
 \end{align*}
 So, it's true that 
 \begin{align*}
-\frac{d}{d\x} \left[ (\D\x)^{\textrm{T}}(\D\x) \right] = 2\D^{\textrm{T}}\D\x\\
+\frac{d}{d\B} \left[ (\D\B)^{\textrm{T}}(\D\B) \right] = 2\D^{\textrm{T}}\D\B\\
 \end{align*}
 
-Finally we can solve for the $\x$ that satisfies
+Finally we can solve for the $\B$ that satisfies
 
 \begin{align*}
-\frac{d}{d\x} \left[||\A\x-\B||_{2}^{2} + \lambda^2||\D \x||_{2}^{2} \right] = 0 \\
+\frac{d}{d\B} \left[||\X\B-\y||_{2}^{2} + \lambda^2||\D \B||_{2}^{2} \right] = 0 \\
 \end{align*}
 or,
 \begin{align*}
- 2\A^{\textrm{T}}\A\x - 2\A^{\textrm{T}}\B + 2\lambda^2 \D^{\textrm{T}}\D\x = 0 \\
- \A^{\textrm{T}}\A\x - \A^{\textrm{T}}\B + \lambda^2 \D^{\textrm{T}}\D\x = 0 \\
- \A^{\textrm{T}}\A\x  + \lambda^2 \D^{\textrm{T}}\D\x = \A^{\textrm{T}}\B\\
-  (\A^{\textrm{T}}\A  + \lambda^2 \D^{\textrm{T}}\D)\x = \A^{\textrm{T}}\B\\
+ 2\X^{\textrm{T}}\X\B - 2\X^{\textrm{T}}\y + 2\lambda^2 \D^{\textrm{T}}\D\B = 0 \\
+ \X^{\textrm{T}}\X\B - \X^{\textrm{T}}\y + \lambda^2 \D^{\textrm{T}}\D\B = 0 \\
+ \X^{\textrm{T}}\X\B  + \lambda^2 \D^{\textrm{T}}\D\B = \X^{\textrm{T}}\y\\
+  (\X^{\textrm{T}}\X  + \lambda^2 \D^{\textrm{T}}\D)\B = \X^{\textrm{T}}\y\\
 \end{align*}
 Thus
 \begin{align*}
-\x = (\A^{\textrm{T}}\A  + \lambda^2 \D^{\textrm{T}}\D)^{-1}\A^{\textrm{T}}\B\\
+\B = (\X^{\textrm{T}}\X  + \lambda^2 \D^{\textrm{T}}\D)^{-1}\X^{\textrm{T}}\y\\
 \end{align*}
 
 Generally speaking, a loss function with weight matrix $\mathbf{\Gamma}$ of the form
 
 \begin{align*}
-\arg \min_{x}||\A\x-\B||_{2}^{2} + ||\textbf{$\Gamma$} \x||_{2}^{2}
+\arg \min_{x}||\X\B-\y||_{2}^{2} + ||\textbf{$\Gamma$} \B||_{2}^{2}
 \end{align*}
 
 will be solved by 
 
 \begin{align*}
-\x = (\A^{\textrm{T}}\A  + \mathbf{\Gamma}^{\textrm{T}}\mathbf{\Gamma})^{-1}\A^{\textrm{T}}\B\\
+\B = (\X^{\textrm{T}}\X  + \mathbf{\Gamma}^{\textrm{T}}\mathbf{\Gamma})^{-1}\X^{\textrm{T}}\y\\
 \end{align*}
 
 but weight matrices can be customized to such a degree that it's best to verify this property for each case. 
