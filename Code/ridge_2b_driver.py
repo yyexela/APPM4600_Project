@@ -1,7 +1,7 @@
 import numpy as np 
 import matplotlib.pyplot as plt
 import estimators 
-from sample import random_sample
+import sample
 
 #no interval is given of where to sample f, choose [-5, 5)
 f = lambda x: np.power(x,2)
@@ -9,12 +9,13 @@ a = -5
 b = 5
 number_of_samples = 20
 number_of_train_samples = 10
-seed = 50
+seed = 80
 
 #get random sample, and divide into training and validation data
-train_x, train_y, valid_x, valid_y = random_sample(number_of_samples, f, a, b, number_of_train_samples, seed = seed)
-degree = 5
+train_x, train_y, valid_x, valid_y = sample.random_sample_equi(number_of_samples, f, a, b, number_of_train_samples, seed = seed)
 xeval = np.linspace(-5,5,1000)
+
+degree = 5
 gammas_initial = [0,0.1]
 fig_initial, ax_initial = plt.subplots(1,1)
 rss_initial = []
