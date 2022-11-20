@@ -19,25 +19,29 @@ def visualize(fig, func, func_name):
     
   # visualize tikhonov estimator
   if fig == 1:
-    seed = 50
-    x_train, y_train, x_test, y_test = random_sample_equi(2*num_train_samples, func, -3, 3, num_train_samples, seed = seed, std_dev = .7)
-    xeval = np.linspace(-3,3,1000)
-    feval = func(xeval)
-    degree = 13
-    weights = finite_diff.generate_centered_D(degree + 1)
-    lam = .1
-    tikhonov = estimators.tikhonov(lam, degree, weights)
-    tikhonov.fit(x_train, y_train)
-    coefs = tikhonov.xstar
-    b_hat = tikhonov.predict(x_test) 
-    poly = tikhonov.predict(xeval)
-    plt.plot(xeval, poly, label = 'Tikhonov Polynomial', color = color2) 
-    plt.plot(x_train, y_train, '.', label = 'Training data', color = color3)
-    plt.plot(xeval, feval, label = 'f(x) = ' + func_name, color = color1)
-    plt.xlabel('x')
-    plt.ylabel('y')
-    plt.legend()
-    plt.show()
+    for degree in range(3,20):
+      seed = 4596
+      x_train, y_train, x_test, y_test = random_sample_equi(2*num_train_samples, func, -3, 3, num_train_samples, seed = seed, std_dev = .7)
+      xeval = np.linspace(-3,3,1000)
+      feval = func(xeval)
+      #degree = 13
+      weights = finite_diff.generate_centered_D(degree + 1)
+      lam = .1
+      tikhonov = estimators.tikhonov(lam, degree, weights)
+      tikhonov.fit(x_train, y_train)
+      coefs = tikhonov.xstar
+      b_hat = tikhonov.predict(x_test) 
+      poly = tikhonov.predict(xeval)
+      plt.title(f"Degree {degree}")
+      plt.plot(xeval, poly, label = 'Tikhonov Polynomial', color = color2) 
+      plt.plot(x_train, y_train, '.', label = 'Training data', color = color3)
+      plt.plot(x_test, y_test, '.', label = 'Testing data', color = 'hotpink')
+      plt.plot(xeval, feval, label = 'f(x) = ' + func_name, color = color1)
+      plt.xlabel('x')
+      plt.ylabel('y')
+      plt.legend()
+      plt.show()
+      plt.close()
   
   #RSS Values vs lambda for a specific seed
   if fig == 2:
@@ -57,9 +61,9 @@ def visualize(fig, func, func_name):
     plt.ylabel('RSS')
     plt.show()  
 
-  #RSS values vs degree for specific seed
+  #RSS values vs degree for specific seed and lambda
   if fig == 3:
-    seed = 50
+    seed = 13
     x_train, y_train, x_test, y_test = random_sample_equi(2*num_train_samples, func, -3, 3, num_train_samples, seed = seed, std_dev = .7)
     degrees = range(3, 20)
     lam = .1
@@ -70,10 +74,11 @@ def visualize(fig, func, func_name):
       tikhonov.fit(x_train, y_train)
       RSS_vals += [tikhonov.RSS(x_test, y_test)]
     plt.plot(degrees, RSS_vals, color = color2)
-    plt.title('RSS vs Degree of beta')
+    plt.title(f'RSS vs Degree of $\\beta$ (seed = {seed})')
     plt.xlabel('Degree')
     plt.ylabel('RSS')
     plt.show()
+    plt.close()
 
   #RSS Values for various seeds
   if fig == 4:
@@ -117,7 +122,7 @@ def visualize(fig, func, func_name):
     degree = 11
     weights = finite_diff.generate_centered_D(degree + 1)
     lambdas = np.linspace(0, 20, num_lambdas)
-    y_evals = np.zeros((len(seeds),num_lambdas))
+    RSS_vals = np.zeros((len(seeds),num_lambdas))
 
     for i in range(len(seeds)):
       seed = seeds[i]
@@ -128,10 +133,10 @@ def visualize(fig, func, func_name):
         tikhonov = estimators.tikhonov(l, degree, weights)
         tikhonov.fit(x_train, y_train)
         RSS_val = tikhonov.RSS(x_test,y_test)
-        y_evals[i][j] = RSS_val
+        RSS_vals[i][j] = RSS_val
       
-    means = np.mean(y_evals,axis=0)
-    stdevs = np.std(y_evals,axis=0)
+    means = np.mean(RSS_vals,axis=0)
+    stdevs = np.std(RSS_vals,axis=0)
     
     plt.plot(lambdas, means, color="red", label="Mean")
     plt.fill_between(lambdas, means-stdevs,\
@@ -141,10 +146,54 @@ def visualize(fig, func, func_name):
     plt.show()
     plt.close()
 
+  #RSS values vs degree for specific seed and lambda
+  if fig == 6:
+    num_seeds = 100
+    seeds = list(range(0,num_seeds))
+    degrees = list(range(3, 20))
+    num_degrees = len(degrees)
+
+    RSS_vals = np.zeros((num_seeds,num_degrees))
+
+    for i in range(num_seeds):
+      seed = seeds[i]
+      x_train, y_train, x_test, y_test = random_sample_equi(2*num_train_samples, func, -3, 3, num_train_samples, seed = seed, std_dev = .7)
+      lam = .1
+      RSS_val = []
+      for d in degrees:
+        weights = finite_diff.generate_centered_D(d + 1)
+        tikhonov = estimators.tikhonov(lam, d, weights)
+        tikhonov.fit(x_train, y_train)
+        RSS_val += [tikhonov.RSS(x_test, y_test)]
+      RSS_vals[i,:] = RSS_val
+    
+    means = np.mean(RSS_vals,axis=0)
+    stdevs = np.std(RSS_vals,axis=0)
+    
+    plt.plot(degrees, means, color="red", label="Mean")
+    plt.fill_between(degrees, means-stdevs,\
+                    means+stdevs,\
+                    color="red", alpha=0.25, edgecolor=None, label="Stdev")
+    plt.ylim(0,8000)
+    plt.legend()
+    plt.show()
+    plt.close()
+
+    plt.matshow(RSS_vals)
+    plt.show()
+    plt.close()
+
+    for i in range(num_seeds):
+      plt.plot(degrees, RSS_vals[i])
+    plt.show()
+    plt.close()
+
+
 
 f = lambda x : np.sin(x) + np.sin(5*x)
 visualize(1, f, fname)
-visualize(2, f, fname)
-visualize(3, f, fname)
-visualize(4, f, fname)
-visualize(5, f, fname)
+#visualize(2, f, fname)
+#visualize(3, f, fname)
+#visualize(4, f, fname)
+#visualize(5, f, fname)
+#visualize(6, f, fname)
