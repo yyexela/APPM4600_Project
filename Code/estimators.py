@@ -3,6 +3,7 @@ import finite_diff
 
 class ridge:
   def __init__(self, gamma = 0, degree = 1):
+    #gamma is regularization constat, degree is degree of polynomial
     self.gamma = gamma
     self.degree = degree
     self.E_ridge = None
@@ -26,7 +27,7 @@ class ridge:
     b_hat = A_test@self.E_ridge
     return b_hat
     
-  #Caclulate RSS for some validation x and y.
+  #Caclulate RSS for some validation x and validation y
   def RSS(self, valid_x, valid_y):
     b_hat = self.predict(valid_x)
     rss = np.sum(np.power((b_hat - valid_y),2))
