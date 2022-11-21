@@ -23,17 +23,18 @@ def visualize(fig, func, func_name):
     x_train, y_train, x_test, y_test = random_sample_equi(2*num_train_samples, func, -3, 3, num_train_samples, seed = seed, std_dev = .7)
     xeval = np.linspace(-3,3,1000)
     feval = func(xeval)
-    degree = 13
+    degree = 15
     weights = finite_diff.generate_centered_D(degree + 1)
-    lam = .1
+    lam = 1
     tikhonov = estimators.tikhonov(lam, degree, weights)
     tikhonov.fit(x_train, y_train)
     coefs = tikhonov.xstar
     b_hat = tikhonov.predict(x_test) 
     poly = tikhonov.predict(xeval)
-    plt.plot(xeval, poly, label = 'Tikhonov Polynomial', color = color2) 
+    plt.plot(xeval, poly, label = 'Least Squares Polynomial', color = color2) 
     plt.plot(x_train, y_train, '.', label = 'Training data', color = color3)
     plt.plot(xeval, feval, label = 'f(x) = ' + func_name, color = color1)
+    plt.title('Degree 15 Tikhonov Estimator with $\lambda = 1$ for seed = 50')
     plt.xlabel('x')
     plt.ylabel('y')
     plt.legend()
@@ -44,7 +45,7 @@ def visualize(fig, func, func_name):
     seed = 50   
     x_train, y_train, x_test, y_test = random_sample_equi(2*num_train_samples, func, -3, 3, num_train_samples, seed = seed, std_dev = .7) 
     lambdas = np.linspace(0, 20, 1000)
-    degree = 11
+    degree = 15
     weights = finite_diff.generate_centered_D(degree + 1)
     RSS_vals = []
     for l in lambdas:
@@ -52,10 +53,11 @@ def visualize(fig, func, func_name):
       tikhonov.fit(x_train, y_train)
       RSS_vals += [tikhonov.RSS(x_test, y_test)]
     plt.plot(lambdas, RSS_vals, color = color2)
-    plt.title('RSS values for $\lambda \in [0, 20]$')
+    plt.title('RSS values of $15^{th}$ Degree Tikhonov Estimator for $\lambda \in [0, 20]$')
     plt.xlabel('$\lambda$')
     plt.ylabel('RSS')
     plt.show()  
+    print('lambda that achieves minimum: ', lambdas[np.argmin(RSS_vals)])
 
   #RSS values vs degree for specific seed
   if fig == 3:
@@ -144,6 +146,8 @@ def visualize(fig, func, func_name):
     plt.savefig("../Images/Tikhonov_5.pdf")
     plt.show()
     plt.close()
+    
+    
 
   #RSS values for various degrees as a single statistical function
   if fig == 6:
@@ -242,6 +246,31 @@ def visualize(fig, func, func_name):
       plt.savefig(f"../Images/Tikhonov_8_{degree}.pdf")
       plt.show()
       plt.close()
+  # Fits for different difference formulas
+  if fig == 9: 
+    seed = 50
+    x_train, y_train, x_test, y_test = random_sample_equi(2*num_train_samples, func, -3, 3, num_train_samples, seed = seed, std_dev = .7)
+    xeval = np.linspace(-3,3,1000)
+    feval = func(xeval)
+    degree = 15
+    weights = [(finite_diff.generate_forward_D(degree + 1), 'Forward'), (finite_diff.generate_backwards_D(degree + 1), 'Backwards'), (finite_diff.generate_2nd_centered_D(degree + 1), '2nd Deg. Centered')]
+    for w in weights:
+      lam = 1
+      tikhonov = estimators.tikhonov(lam, degree, w[0])
+      tikhonov.fit(x_train, y_train)
+      coefs = tikhonov.xstar
+      b_hat = tikhonov.predict(x_test)
+      poly = tikhonov.predict(xeval)
+      plt.plot(xeval, poly, label = 'Tikhonov Polynomial', color = color2)
+      plt.plot(x_train, y_train, '.', label = 'Training data', color = color3)
+      plt.plot(xeval, feval, label = 'f(x) = ' + func_name, color = color1)
+      plt.title('Deg. 15 Tikhonov with $\lambda = .1$ for seed = 50 Using ' + w[1] + ' Diff.')
+      plt.xlabel('x')
+      plt.ylabel('y')
+      plt.legend()
+      plt.show()
+      plt.close()
+
 
 f = lambda x : np.sin(x) + np.sin(5*x)
 #visualize(1, f, fname)
