@@ -1,7 +1,9 @@
 import numpy as np 
 
-def random_sample_equi(number_of_samples, f, a, b, number_of_train_samples, mean = 0, std_dev = 1, seed = None):
 
+#this function was consolidated into sample.py, use that file for future use/reference
+def random_sample_equi(number_of_samples, f, a, b, number_of_train_samples, mean = 0, std_dev = 1, seed = None):
+  
  
     rng = np.random.default_rng(seed)
     sample_x = np.linspace(a,b,number_of_samples)
