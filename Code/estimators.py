@@ -7,22 +7,26 @@ class ridge:
     self.degree = degree
     self.E_ridge = None
     
+  # Construct A matrix
   def construct_A(self, input_x):
     A_matrix = np.ones((input_x.shape[0], self.degree + 1))
     for i in range(A_matrix.shape[1] - 1):
       A_matrix[:,i + 1] = np.power(input_x, i + 1)
     return A_matrix
 
+  #Use the closed form solution of the ridge estimator to find solution
   def fit(self, train_x, train_y):
     A_matrix = self.construct_A(train_x)
     b = train_y
     self.E_ridge = np.linalg.inv(np.transpose(A_matrix)@A_matrix + self.gamma*np.identity(A_matrix.shape[1]))@np.transpose(A_matrix)@b
 
+  #Predict y values for given x values after estimator has been fitted
   def predict(self, input_x):
     A_test = self.construct_A(input_x)
     b_hat = A_test@self.E_ridge
     return b_hat
     
+  #Caclulate RSS for some validation x and y.
   def RSS(self, valid_x, valid_y):
     b_hat = self.predict(valid_x)
     rss = np.sum(np.power((b_hat - valid_y),2))
