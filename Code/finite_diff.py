@@ -115,6 +115,26 @@ def generate_centered_D(N):
     D = D[1:-1]
     return D
 
+def generate_forward_D(N):
+    N -= 1
+    FD_list = [(2, 1)] * (N) + [(0, 1)]
+    D = generate_D(FD_list)
+    return D
+
+def generate_backwards_D(N):
+    N -= 1
+    FD_list = [(0,1)] + [(3, 1)] * (N)
+    D = generate_D(FD_list)
+    return D
+
+def generate_2nd_centered_D(N):
+    N -= 2
+    FD_list = [(0, 1)] + [(4,1)]*N + [(0, 1)]
+    D = generate_D(FD_list)
+    D = D[1:-1]
+    return D
+
+
 def test_D_1():
     '''
     Test function to make sure D is created properly
