@@ -3,6 +3,7 @@ import finite_diff
 
 class ridge:
   def __init__(self, gamma = 0, degree = 1):
+    #gamma is regularization constat, degree is degree of polynomial
     self.gamma = gamma
     self.degree = degree
     self.E_ridge = None
