@@ -151,28 +151,38 @@ def visualize(fig, func, func_name):
 
   #RSS values for various degrees as a single statistical function
   if fig == 6:
-    seed = 50
+    # Make plots of RSS values vs degree (y-axis has mean and standard deviation) for a specific seed
 
-    num_lambdas = 100
-    degrees = list(range(1,20))
-    lambdas = np.linspace(0, 20, num_lambdas)
-    y_evals = np.zeros((len(degrees),num_lambdas))
+    seed = 50 # Set a constant seed
+    num_lambdas = 100 # Number of lambdas to evaluate
+    degrees = list(range(1,20)) # Degrees of the polynomials we're fitting
+    lambdas = np.linspace(0, 20, num_lambdas) # Range of lambdas we're evaluating at
+    y_evals = np.zeros((len(degrees),num_lambdas)) # Matrix which stores out results
 
+    # Iterate over the different polynomial fits
     for i in range(len(degrees)):
+      # Set the current degree we're using
       degree = degrees[i]
+      # Generate our D matrix for centered difference
       weights = finite_diff.generate_centered_D(degree + 1)
+      # Generate our training and testing data
       x_train, y_train, x_test, y_test = random_sample_equi(2*num_train_samples, func, -3, 3, num_train_samples, seed = seed, std_dev = .7)
+      # List that we're storing our result in for different lambdas
       RSS_vals = []
       for j in range(len(lambdas)):
         l = lambdas[j]
+        # Solve our Tikhonov equation
         tikhonov = estimators.tikhonov(l, degree, weights)
         tikhonov.fit(x_train, y_train)
         RSS_val = tikhonov.RSS(x_test,y_test)
+        # Store our result
         y_evals[i][j] = RSS_val
       
+    # Calculate the mean and standard deviation for each lamdba
     means = np.mean(y_evals,axis=0)
     stdevs = np.std(y_evals,axis=0)
     
+    # Make and save our plot
     plt.plot(lambdas, means, color="red", label="Mean")
     plt.fill_between(lambdas, means-stdevs,\
                     means+stdevs,\
@@ -187,28 +197,40 @@ def visualize(fig, func, func_name):
 
   #RSS values vs degree for specific seed and lambda
   if fig == 7:
-    num_seeds = 100
-    seeds = list(range(0,num_seeds))
-    degrees = list(range(3, 20))
+    # Make plots of RSS values vs degree (y-axis has mean and standard deviation) for a specific lambda
+
+    num_seeds = 100 # Number of seeds we'll iterator over
+    seeds = list(range(0,num_seeds)) # Make our list of seeds
+    degrees = list(range(3, 20)) # Degrees of the polynomials we're fitting
     num_degrees = len(degrees)
 
+    # Make our matrix that we'll store our results in
     RSS_vals = np.zeros((num_seeds,num_degrees))
 
+    # Iterate over our seeds
     for i in range(num_seeds):
       seed = seeds[i]
+      # Get our training and testing data
       x_train, y_train, x_test, y_test = random_sample_equi(2*num_train_samples, func, -3, 3, num_train_samples, seed = seed, std_dev = .7)
+      # Constant lambda for Tikhonov
       lam = .1
       RSS_val = []
+      # Iterate over our degrees
       for d in degrees:
+        # Generate our centered difference D matrix
         weights = finite_diff.generate_centered_D(d + 1)
+        # Fit our Tikhonov
         tikhonov = estimators.tikhonov(lam, d, weights)
         tikhonov.fit(x_train, y_train)
+        # Store our result
         RSS_val += [tikhonov.RSS(x_test, y_test)]
       RSS_vals[i,:] = RSS_val
 
+    # Calculate our mean and standard deviation for each gamma
     means = np.mean(RSS_vals,axis=0)
     stdevs = np.std(RSS_vals,axis=0)
 
+    # Make our plot
     plt.plot(degrees, means, color="red", label="Mean")
     plt.fill_between(degrees, means-stdevs,\
                     means+stdevs,\
@@ -223,18 +245,26 @@ def visualize(fig, func, func_name):
     plt.close()
 
   if fig == 8:
+    # Make plots training/testing data, our original function, and Tikhonov fit
+
+    # Iterate over our polynomials
     for degree in range(15,20):
+      # Constant seed which looks nice for plotting purposes
       seed = 4596
+      # Get our training and testing data
       x_train, y_train, x_test, y_test = random_sample_equi(2*num_train_samples, func, -3, 3, num_train_samples, seed = seed, std_dev = .7)
       xeval = np.linspace(-3,3,1000)
       feval = func(xeval)
+      # Generate our D matrix for centered difference
       weights = finite_diff.generate_centered_D(degree + 1)
+      # Constant lambda for Tikhonov
       lam = .1
+      # Fit our Tikhonov regularization
       tikhonov = estimators.tikhonov(lam, degree, weights)
       tikhonov.fit(x_train, y_train)
-      coefs = tikhonov.xstar
-      b_hat = tikhonov.predict(x_test) 
+      # Get our predicted polynomial
       poly = tikhonov.predict(xeval)
+      # Make our plot
       plt.title(f"Degree {degree} Tikhonov Estimator with $\lambda$={lam} for seed = {seed}")
       plt.plot(xeval, poly, label = 'Tikhonov Polynomial', color = color2) 
       plt.plot(x_train, y_train, '.', label = 'Training data', color = color3)
@@ -246,6 +276,7 @@ def visualize(fig, func, func_name):
       plt.savefig(f"../Images/Tikhonov_8_{degree}.pdf")
       plt.show()
       plt.close()
+
   # Fits for different difference formulas
   if fig == 9: 
     seed = 50
