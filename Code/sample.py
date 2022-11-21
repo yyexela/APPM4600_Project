@@ -1,7 +1,12 @@
 import numpy as np 
 
-def random_sample(number_of_samples, f, a, b, number_of_train_samples, mean = 0, std_dev = 1, seed = None):
 
+def random_sample(number_of_samples, f, a, b, number_of_train_samples, mean = 0, std_dev = 1, seed = None):
+    '''
+    Take in Number of Samples, Function, end points, how many samples should be training samples, mean, std_dev, and random seed
+    x values pulled from a uniform [a,b] distribution, adds Gaussian Noise to y values
+    Returns training x, training y, valid x, and valid y 
+    '''
  
     rng = np.random.default_rng(seed)
     sample_x = rng.uniform(a,b, (number_of_samples, 1))
@@ -34,7 +39,11 @@ def random_sample(number_of_samples, f, a, b, number_of_train_samples, mean = 0,
     return train_x, train_y, valid_x, valid_y
     
 def random_sample_equi(number_of_samples, f, a, b, number_of_train_samples, mean = 0, std_dev = 1, seed = None):
-
+    '''
+    Take in Number of Samples, Function, end points, how many samples should be training samples, mean, std_dev, and random seed
+    x values are equispaced from [a,b], adds Gaussian Noise to y values
+    Returns training x, training y, valid x, and valid y 
+    '''
  
     rng = np.random.default_rng(seed)
     sample_x = np.linspace(a,b,number_of_samples)

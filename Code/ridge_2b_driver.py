@@ -9,7 +9,8 @@ color2 = '#1982C4'
 color3 = '#6A4C93'
 colors =[color1, color2, color3]
 
-#no interval is given of where to sample f, choose [-5, 5)
+#no interval is given of where to sample f, choose [-5, 5]
+#choose function and number of samples
 f = lambda x: x**2
 a = -5
 b = 5
@@ -23,6 +24,7 @@ seed = 50
 
 train_x, train_y, valid_x, valid_y = sample.random_sample_equi(number_of_samples, f, a, b, number_of_train_samples, seed = seed)
 
+#Make Graphs for gammas = 0, 0.1 and calculate RSS, seed = 50
 gammas_initial = [0,0.1]
 linestyles = ['-', '--']
 fig_initial, ax_initial = plt.subplots(1,1)
@@ -43,6 +45,7 @@ ax_initial.set_title('Fitted Curves and Real Function for initial $\gamma$\'s, s
 print(rss_initial)
 plt.show()
 
+#make RSS graph for gammas between 0 and 50 for seed = 50
 gammas_log = np.linspace(0,50,1000)
 fig_log10, ax_log10 = plt.subplots(1,1)
 rss_log10 = []
@@ -56,9 +59,9 @@ ax_log10.set_xlabel('$\gamma$')
 ax_log10.set_ylabel('Residual Sum of Squares')
 plt.show()
 
-
+#Make RSS graph for gammas between 0 and 50 for seeds 1-100
 fig, ax = plt.subplots(1,1)
-seed_list = range(1,101)
+seed_list = range(1,101) #iterate through all seeds
 gammas = np.linspace(0,50,1000)
 mean_std_mat = np.zeros((len(seed_list),len(gammas)))
 gammas_best = []
@@ -78,7 +81,6 @@ ax.set_xlabel('$\gamma$')
 ax.set_ylabel('log10 of Residual Sum of Squares')
 ax.set_title('Residual Sum of Squares vs $\gamma$ for seeds 1-100')
 ax.set_yscale('log')
-#ax.set_ylim(bottom = 0, top = 200)
 plt.show()
 
 means = np.mean(mean_std_mat,axis=0)
