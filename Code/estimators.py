@@ -26,7 +26,7 @@ class ridge:
     b_hat = A_test@self.E_ridge
     return b_hat
     
-  #Caclulate RSS for some validation x and y.
+  #Caclulate RSS for some validation x and validation y
   def RSS(self, valid_x, valid_y):
     b_hat = self.predict(valid_x)
     rss = np.sum(np.power((b_hat - valid_y),2))
