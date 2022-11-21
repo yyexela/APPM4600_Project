@@ -82,6 +82,8 @@ ax.set_yscale('log')
 plt.show()
 
 means = np.mean(mean_std_mat,axis=0)
+best_mean = np.min(means)
+best_gamma = gammas[np.argmin(means)]
 stdevs = np.std(mean_std_mat,axis=0)
 
 plt.plot(gammas, means, color="red", label="Mean")
@@ -97,6 +99,8 @@ plt.show()
 plt.close()
 
 nonzero_gammas_count = np.count_nonzero(gammas_best)
+print('Best gamma was ' + str(best_gamma))
+print('Min RSS was ' + str(best_mean))
 print('We had this many 0 gammas ' + str(len(gammas_best) - nonzero_gammas_count))
 print('We had this many nonzero gammas ' + str(nonzero_gammas_count))
 print('Percent nonzero ' + str(nonzero_gammas_count/len(gammas_best)))
