@@ -7,30 +7,39 @@ from sample import random_sample_equi
 ## Generating training / testing data
 
 num_train_samples = 60
-num_test_samples = 20
-seed = 50
 
 color1 = '#FF595E'
 color2 = '#1982C4'
 color3 = '#6A4C93'
 fname = '$sin(x) + sin(5x)$'
 
+#function to visualize individual plots depending on input fig. Takes fig, an int 1-9, func a vectorized function, and a string of the function for plot labels 
 def visualize(fig, func, func_name):
     
-  # visualize tikhonov estimator
+  # visualize tikhonov estimator vs actual function
   if fig == 1:
+    #set random seed and generate random samples
     seed = 50
     x_train, y_train, x_test, y_test = random_sample_equi(2*num_train_samples, func, -3, 3, num_train_samples, seed = seed, std_dev = .7)
+    
+    #meshes for function and polynomial plotting
     xeval = np.linspace(-3,3,1000)
     feval = func(xeval)
+
+    #initialize info for tikhonov
     degree = 15
     weights = finite_diff.generate_centered_D(degree + 1)
     lam = 1
+
+    # create and fit tikhonov, predict on test data
     tikhonov = estimators.tikhonov(lam, degree, weights)
     tikhonov.fit(x_train, y_train)
-    coefs = tikhonov.xstar
     b_hat = tikhonov.predict(x_test) 
+    
+    #get polynomial by predictin on entire interval 
     poly = tikhonov.predict(xeval)
+
+    #plot everything
     plt.plot(xeval, poly, label = 'Least Squares Polynomial', color = color2) 
     plt.plot(x_train, y_train, '.', label = 'Training data', color = color3)
     plt.plot(xeval, feval, label = 'f(x) = ' + func_name, color = color1)
@@ -42,30 +51,47 @@ def visualize(fig, func, func_name):
   
   #RSS Values vs lambda for a specific seed
   if fig == 2:
-    seed = 50   
+    #set seed and generate random info, etc. same as above
+    seed = 50
     x_train, y_train, x_test, y_test = random_sample_equi(2*num_train_samples, func, -3, 3, num_train_samples, seed = seed, std_dev = .7) 
+    
+    #generate all lambdas
     lambdas = np.linspace(0, 20, 1000)
     degree = 15
     weights = finite_diff.generate_centered_D(degree + 1)
+    
+    #list for storing RSS values
     RSS_vals = []
+    
+    #create and fit tikhonov for each lambda, collect RSS values. 
     for l in lambdas:
       tikhonov = estimators.tikhonov(l, degree, weights)
       tikhonov.fit(x_train, y_train)
       RSS_vals += [tikhonov.RSS(x_test, y_test)]
+   
+    #plot!
     plt.plot(lambdas, RSS_vals, color = color2)
     plt.title('RSS values of $15^{th}$ Degree Tikhonov Estimator for $\lambda \in [0, 20]$')
     plt.xlabel('$\lambda$')
     plt.ylabel('RSS')
-    plt.show()  
+    plt.show()
+    
+    #find and print minimum lambda  
     print('lambda that achieves minimum: ', lambdas[np.argmin(RSS_vals)])
 
   #RSS values vs degree for specific seed
   if fig == 3:
+    
+    #initialize same info as prev funcs. 
     seed = 50
     x_train, y_train, x_test, y_test = random_sample_equi(2*num_train_samples, func, -3, 3, num_train_samples, seed = seed, std_dev = .7)
+    
+    #range of all degrees
     degrees = range(3, 20)
     lam = .1
     RSS_vals = []
+
+    #create and fit tikhonov for each degree, collect and store RSS on val. data.
     for d in degrees:
       weights = finite_diff.generate_centered_D(d + 1)
       tikhonov = estimators.tikhonov(lam, d, weights)
@@ -79,10 +105,15 @@ def visualize(fig, func, func_name):
 
   #RSS Values for various seeds
   if fig == 4:
+    # initialize seed range
     seeds = range(1,101)
-    seeds = sorted(list(set(seeds))) 
+    
+    #list to store best lambda for each seed
     best_lambdas = []
+
+    #iterate over each seed
     for seed in seeds:
+      #initialize data, tikhonov info, and lambda range
       x_train, y_train, x_test, y_test = random_sample_equi(2*num_train_samples, func, -3, 3, num_train_samples, seed = seed, std_dev = .7)
       lambdas = np.linspace(0, 20, 1000)
       degree = 15
@@ -90,6 +121,7 @@ def visualize(fig, func, func_name):
       RSS_vals = []
       minRSS = float('inf')
       minlam = 0
+      # iterate over lambdas and find minimum RSS and equivalent lambda 
       for l in lambdas:
         tikhonov = estimators.tikhonov(l, degree, weights)
         tikhonov.fit(x_train, y_train)
@@ -98,9 +130,12 @@ def visualize(fig, func, func_name):
         if RSS < minRSS:
           minRSS = RSS
           minlam = l
+      # add best lambda for each seed 
       best_lambdas += [minlam]
+      # plot the RSS vs Lambda line semi-transparent
       plt.plot(lambdas, RSS_vals, alpha = .3)
 
+    #plot everything else and print zero and nonzero lambdas 
     plt.semilogy()
     plt.xlabel('$\lambda$')
     plt.ylabel('RSS')
@@ -113,8 +148,6 @@ def visualize(fig, func, func_name):
   #RSS values for various seeds as a single statistical function
   if fig == 5:
     seeds = range(1,101)
-    seeds = sorted(list(set(seeds)))
-
     num_lambdas = 100
     degree = 11
     weights = finite_diff.generate_centered_D(degree + 1)
@@ -278,13 +311,16 @@ def visualize(fig, func, func_name):
       plt.close()
 
   # Fits for different difference formulas
-  if fig == 9: 
+  if fig == 9:
+    # same as above 
     seed = 50
     x_train, y_train, x_test, y_test = random_sample_equi(2*num_train_samples, func, -3, 3, num_train_samples, seed = seed, std_dev = .7)
     xeval = np.linspace(-3,3,1000)
     feval = func(xeval)
     degree = 15
+    #list of different weight matrices and their names 
     weights = [(finite_diff.generate_forward_D(degree + 1), 'Forward'), (finite_diff.generate_backwards_D(degree + 1), 'Backwards'), (finite_diff.generate_2nd_centered_D(degree + 1), '2nd Deg. Centered')]
+    # generate tikhonov for each weight and create same plot as fig = 1
     for w in weights:
       lam = 1
       tikhonov = estimators.tikhonov(lam, degree, w[0])
@@ -303,6 +339,7 @@ def visualize(fig, func, func_name):
       plt.close()
 
 
+# Uncomment any of the below to produce a specific figure
 f = lambda x : np.sin(x) + np.sin(5*x)
 #visualize(1, f, fname)
 #visualize(2, f, fname)
