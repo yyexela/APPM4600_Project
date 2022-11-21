@@ -83,11 +83,13 @@ ax.set_title('Residual Sum of Squares vs $\gamma$ for seeds 1-100')
 ax.set_yscale('log')
 plt.show()
 
+# Calculate mean and stdev across different seeds
 means = np.mean(mean_std_mat,axis=0)
 best_mean = np.min(means)
 best_gamma = gammas[np.argmin(means)]
 stdevs = np.std(mean_std_mat,axis=0)
 
+# Plot our mean and stdev plots
 plt.plot(gammas, means, color="red", label="Mean")
 plt.fill_between(gammas, means-stdevs,\
                 means+stdevs,\
