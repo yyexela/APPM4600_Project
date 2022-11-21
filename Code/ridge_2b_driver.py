@@ -39,7 +39,7 @@ ax_initial.plot(train_x, train_y,'.', color ='green', label = 'Training Data')
 ax_initial.legend()
 ax_initial.set_xlabel('x')
 ax_initial.set_ylabel('y')
-ax_initial.set_title('Fitted Curvesds and Real Function for initial $\gamma$s, seed = 50')
+ax_initial.set_title('Fitted Curves and Real Function for initial $\gamma$\'s, seed = 50')
 print(rss_initial)
 plt.show()
 
@@ -51,7 +51,7 @@ for gamma in gammas_log:
     ridge.fit(train_x, train_y)
     rss_log10.append(ridge.RSS(valid_x, valid_y))
 ax_log10.plot(gammas_log, rss_log10, color = color2)
-ax_log10.set_title('Residual Sum of Squares for various gammas, seed = 50')
+ax_log10.set_title('Residual Sum of Squares for various $\gamma$\'s, seed = 50')
 ax_log10.set_xlabel('$\gamma$')
 ax_log10.set_ylabel('Residual Sum of Squares')
 plt.show()
@@ -59,7 +59,7 @@ plt.show()
 
 fig, ax = plt.subplots(1,1)
 seed_list = range(1,101)
-gammas = np.linspace(0,40,1000)
+gammas = np.linspace(0,50,1000)
 mean_std_mat = np.zeros((len(seed_list),len(gammas)))
 gammas_best = []
 for i in range(len(seed_list)):
@@ -89,11 +89,13 @@ plt.fill_between(gammas, means-stdevs,\
                 means+stdevs,\
                 color="red", alpha=0.25, edgecolor=None, label="Stdev")
 plt.semilogy()
+plt.xlabel('$\gamma$')
+plt.ylabel('log10 of Residual Sum of Squares')
+plt.title('Mean and Standard Deviation of RSS vs $\gamma$ for seeds 1-100')
 plt.legend()
 plt.show()
 plt.close()
 
-print(gammas_best)
 nonzero_gammas_count = np.count_nonzero(gammas_best)
 print('We had this many 0 gammas ' + str(len(gammas_best) - nonzero_gammas_count))
 print('We had this many nonzero gammas ' + str(nonzero_gammas_count))
