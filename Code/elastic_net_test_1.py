@@ -2,23 +2,23 @@ import matplotlib.pyplot as plt
 import numpy as np
 from elastic_net import ElasticNet
 
-x_min = -1
-x_max = 1
+x_min = 0
+x_max = 5
 y_min = 0
-y_max = 1
+y_max = 30
 
-f = lambda x: x**2
-x_eval = np.linspace(x_min, x_max, 100)
+f = lambda x: x**2+2*x-2
+x_eval = np.array([1,2,3,4])
 y_eval = f(x_eval)
 
-degree = 4
+degree = 2
 
 # Create grid of values for alpha and lambda
 #alphas = np.linspace(0,1,10)
 #_lambdas = np.linspace(0,1,10)
 alphas = np.array([0.5])
 _lambdas = np.array([0.5])
-coordinate_descent_steps = 100
+coordinate_descent_steps = 10
 
 # Iterate over grid
 for alpha in alphas:
@@ -40,9 +40,7 @@ for alpha in alphas:
 
         # Create the others
         initial_en = en.get_elastic_net()
-        for i in range(0,coordinate_descent_steps):
-            for j in range(1, degree+1):
-                en.step_j(j)
+        en.iterate_coord_descent(coordinate_descent_steps)
         final_en = en.get_elastic_net()
 
         print(f"Degree {degree}, initial EN {initial_en:2.2E}, final EN {final_en:2.2E}, alpha {alpha:0.6f}, lambda {_lambda:0.6f}")
@@ -50,7 +48,7 @@ for alpha in alphas:
         print()
 
         ax.scatter(x_eval, en.get_prediction(x_eval), s=scatter_marker_size, color='green', label=f"Regularized Fit")
-        ax.set_ylim(y_min,y_max)
+        #ax.set_ylim(y_min,y_max)
         ax.set_title(f"Degree {degree}, initial EN {initial_en:2.2e}, final EN {final_en:2.2e}, $\\alpha={alpha:0.6f}$, $\lambda={_lambda:0.6f}$")
         ax.legend()
         plt.savefig(f'../Images/EN_alpha{alpha:0.6f}_lambda{_lambda:0.6f}_degree{degree}.pdf')

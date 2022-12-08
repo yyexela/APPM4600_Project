@@ -29,28 +29,37 @@ class ElasticNet:
         self._lambda = _lambda
         self.verbose = verbose
 
-        # Standardize x values
-        self.x_mean = np.mean(x_data)
-        self.x_std = np.std(x_data)
-        self.x_data = self.standardize_x(x_data)
-
         # For ease, store value for number of data points
-        self.N = x_data.shape[0]
+        self.N = self.x_data_initial.shape[0]
 
         # Create our X matrix from the paper
-        self.X = self.create_X(self.x_data, degree)
+        self.X = self.create_X(self.x_data_initial, self.degree)
+
+        # Standardize x values
+        self.X, self.X_means, self.x_stds = self.standardize_X(self.X)
 
         # Make initial weights values
         # TODO: What should these be initialized to? Currently just doing zero
         self.b = np.ones(degree+1)*b_init
-    
-    def standardize_x(self, x):
-        '''
-        `standardize_x`
 
-        Normalizes x-values
+    def standardize_X(self, X):
         '''
-        return (x-self.x_mean)/(self.x_std)
+        `standardize_X`
+
+        Normalizes X matrix per column
+        Each column has mean zero and sum of squares divided by rows as 1
+        '''
+
+        means = np.mean(X, 0)
+        stds = np.std(X, 0)
+
+        # Remove zeros from standard deviations
+        for i in range(len(stds)):
+            if stds[i] == 0. :
+                stds[i] = 1.
+        X = (X - means)/stds
+
+        return X, means, stds
 
     def unstandardize_x(self, x):
         '''
@@ -99,6 +108,25 @@ class ElasticNet:
         y = X @ self.b
 
         return y
+
+    def iterate_coord_descent(self, n):
+        '''
+        `iterate_coord_descent`
+
+        Does n steps of coordinate descent for each weight b[1] to b[-1]
+
+        Parameters
+
+        n: Number of steps to do
+
+        Returns
+
+        Nothing, but updates weights in beta
+        '''
+
+        for _ in range(n):
+            for j in range(1, self.degree+1):
+                self.step_j(j)
 
     def step_j(self, j):
         '''
