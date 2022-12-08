@@ -36,11 +36,35 @@ class ElasticNet:
         self.X = self.create_X(self.x_data_initial, self.degree)
 
         # Standardize x values
-        self.X, self.X_means, self.x_stds = self.standardize_X(self.X)
+        self.X, self.X_means, self.X_stds = self.standardize_X(self.X)
 
         # Make initial weights values
         # TODO: What should these be initialized to? Currently just doing zero
         self.b = np.ones(degree+1)*b_init
+
+    def get_X(self):
+        '''
+        `get_X`
+
+        Returns the X matrix
+        '''
+        return self.X
+
+    def get_means(self):
+        '''
+        `get_means`
+
+        Returns the means for the data matrix
+        '''
+        return self.X_means
+
+    def get_stds(self):
+        '''
+        `get_stds`
+
+        Returns the stds for the data matrix
+        '''
+        self.X_stds
 
     def standardize_X(self, X):
         '''
@@ -53,6 +77,18 @@ class ElasticNet:
         means = np.mean(X, 0)
         stds = np.std(X, 0)
 
+        X, means, stds = self.standardize_X_ms(X, means, stds)
+
+        return X, means, stds
+
+    def standardize_X_ms(self, X, means, stds):
+        '''
+        `standardize_X_ms`
+
+        Normalizes X matrix per column given means and stds
+        Each column has mean zero and sum of squares divided by rows as 1
+        '''
+
         # Remove zeros from standard deviations
         for i in range(len(stds)):
             if stds[i] == 0. :
@@ -61,21 +97,16 @@ class ElasticNet:
 
         return X, means, stds
 
-    def unstandardize_x(self, x):
+    def unstandardize_X(self, X):
         '''
-        `unstandardize_x`
+        `unstandardize_X`
 
-        Undoes normalization for x-values
+        Un-normalizes X matrix per column
+        Each column has mean zero and sum of squares divided by rows as 1
         '''
-        return x*self.x_std + self.x_mean
 
-    def get_x_data(self):
-        '''
-        `get_x_data`
-
-        Returns normalized x-values
-        '''
-        return self.x_data
+        X = X*self.X_stds + self.X_means
+        return X
 
     def get_b(self):
         '''
@@ -100,11 +131,13 @@ class ElasticNet:
         y-values at those x-values
         '''
 
-        # Do our transformation to standardized data
-        x_eval_standardized = (x_eval - self.x_mean)/(self.x_std)
+        # Create our X matrix from the paper
+        X = self.create_X(x_eval, self.degree)
+
+        # Standardize x values
+        X, _, _ = self.standardize_X_ms(X, self.X_means, self.X_stds)
 
         # Get the y values for our X's
-        X = self.create_X(x_eval_standardized, self.degree)
         y = X @ self.b
 
         return y
