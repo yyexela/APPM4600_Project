@@ -7,7 +7,7 @@ x_max = 1
 y_min = 0
 y_max = 1
 
-f = lambda x: x**2
+f = lambda x: np.ones(x.shape)
 x_eval = np.linspace(x_min, x_max, 100)
 y_eval = f(x_eval)
 
@@ -17,7 +17,7 @@ degree = 4
 #alphas = np.linspace(0,1,5)
 #_lambdas = np.linspace(0,1,5)
 alphas = np.array([0.5])
-_lambdas = np.array([0.1])
+_lambdas = np.array([0.25])
 coordinate_descent_steps = 100
 
 # Iterate over grid

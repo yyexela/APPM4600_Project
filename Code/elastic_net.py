@@ -42,6 +42,9 @@ class ElasticNet:
         # TODO: What should these be initialized to? Currently just doing zero
         self.b = np.ones(degree+1)*b_init
 
+        # Get b0 term
+        self.b[0] = self.get_intercept()
+
     def get_X(self):
         '''
         `get_X`
@@ -137,10 +140,25 @@ class ElasticNet:
         # Standardize x values
         X, _, _ = self.standardize_X_ms(X, self.X_means, self.X_stds)
 
+        # Get b0 term
+        self.b[0] = self.get_intercept()
+
         # Get the y values for our X's
         y = X @ self.b
 
-        return y
+        return y + self.b[0]
+    
+    def get_intercept(self):
+        '''
+        `get_intercept`
+
+        Returns
+
+        Intercept formula obtained from Tyler
+        '''
+
+        b0 = sum((self.y_data - self.X@self.b)[1:])/self.N
+        return b0
 
     def iterate_coord_descent(self, n):
         '''
