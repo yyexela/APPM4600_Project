@@ -21,6 +21,7 @@ class ElasticNet:
 
         Nothing
         '''
+
         # Store initial values
         self.x_data_initial = x_data
         self.y_data = y_data
@@ -75,6 +76,14 @@ class ElasticNet:
 
         Normalizes X matrix per column
         Each column has mean zero and sum of squares divided by rows as 1
+
+        Parameters
+
+        X matrix which is standardized
+
+        Returns
+
+        Standardized X matrix, the column means, the column standard deviations
         '''
 
         means = np.mean(X, 0)
@@ -90,6 +99,16 @@ class ElasticNet:
 
         Normalizes X matrix per column given means and stds
         Each column has mean zero and sum of squares divided by rows as 1
+
+        Parameters
+
+        X matrix which is standardized
+        Column means which are used in standardization
+        Column standard deviations which are used in standardization
+
+        Returns
+
+        Standardized X matrix, the column means used, the column standard deviations used
         '''
 
         # Remove zeros from standard deviations
@@ -104,8 +123,15 @@ class ElasticNet:
         '''
         `unstandardize_X`
 
-        Un-normalizes X matrix per column
-        Each column has mean zero and sum of squares divided by rows as 1
+        Un-normalizes X matrix per column using the training means and standard deviations
+
+        Parameters
+
+        X which is to be unstandardized
+
+        Returns
+
+        Unstandardized input matrix X
         '''
 
         X = X*self.X_stds + self.X_means
@@ -115,7 +141,7 @@ class ElasticNet:
         '''
         `get_b`
 
-        Returns weights
+        Returns current elastic net weights
         '''
         return self.b
 
@@ -200,7 +226,7 @@ class ElasticNet:
 
         if j <= 0:
             raise Exception(f"step_j: j ({j}) must be greater than 0")
-
+        
         # Solve for y tilde (j) first
         y_tilde = np.sum(self.X*self.b,1)-self.X[:,j]*self.b[j]
 
@@ -276,7 +302,7 @@ class ElasticNet:
             X[:,col] = np.power(x_data,col)
         return X
 
-    def get_elastic_net(self):
+    def get_elastic_net(self, x_data, y_data):
         '''
         `get_elastic_net`
 
@@ -286,7 +312,7 @@ class ElasticNet:
 
         Parameters
 
-        None
+        x_data, y_data: (x,y) points that we're calculating the residual sum of squares for 
 
         Returns
 
@@ -294,11 +320,36 @@ class ElasticNet:
         '''
 
         # Calculate RSS term
-        RSS = sum(np.power(np.sum(self.X*self.b,1)-self.y_data,2))
-        RSS = RSS/self.N
+        RSS = self.get_RSS(x_data, y_data)
 
         # Calculate regularization term
         P = (1-self.alpha)*norm(self.b[1:],2)**2/2 + self.alpha*norm(self.b[1:],1)
 
         # Return function elastic net is trying to minimize
         return RSS + P
+
+    def get_RSS(self, x_data, y_data):
+        '''
+        `get_RSS`
+
+        Gets the Residual Sum of Squares
+
+        Parameters
+
+        x_data, y_data: (x,y) points that we're calculating the residual sum of squares for 
+
+        Returns
+
+        Elastic net formula that is being minimized (formula 1 in the above paper)
+        '''
+
+        # Create our X matrix and standardize it
+        X = self.create_X(x_data, self.degree)
+        X, _, _ = self.standardize_X(X)
+
+        # Calculate RSS term
+        RSS = sum(np.power(np.sum(X*self.b,1)-y_data,2))
+        RSS = RSS/self.N
+
+        # Return Residual Sum of Squares
+        return RSS
