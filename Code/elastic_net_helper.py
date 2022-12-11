@@ -4,23 +4,21 @@ import numpy as np
 from tabulate import tabulate
 
 class ElasticNetHelper:
-    def __init__(self, f, degree, x_min, x_max, alpha, _lambda, num_evals_x, num_train_x, num_true_x, seed, img_name, save_dir = '../Images', verbose = False):
+    def __init__(self, f, degree, x_min, x_max, num_evals_x, num_train_x, noise = 0, verbose = False):
         '''
         `__init__`
 
         Initialize the plotting helper for the elastic net solver `ElasticNet`
+        These parameters are meant to be constant across all generated elastic net solvers
 
         Parameters
 
         `f`: Function that we're fitting to
         `degree`: Degree fit we want
         `x_min`, `x_max`: Domain that we're fitting to
-        `alpha`, `_lambda`: Hyperparameters for `ElasticNet`, see `elastic_net.py` for more details
         `num_evals_x`: Number of equispaced points in the domain to use for training and validation data
         `num_train_x`: Number of randomly sampled points from `num_evals_x` to use for training, rest is for validation
-        `seed`: Numpy seed for consistency
-        `img_name`: Name for the saved image
-        `save_dir`: Directory where we'll save the image (Defaults to '../Images')
+        `noise`: Noise for each generated elastic net solver
         `verbose`: Optionally turn on (True) or off (False) extra prints (Defaults to 'False')
 
         Returns
@@ -33,32 +31,45 @@ class ElasticNetHelper:
         self.degree = degree
         self.x_min = x_min
         self.x_max = x_max
-        self.alpha = alpha
-        self._lambda = _lambda
         self.num_evals_x = num_evals_x
         self.num_train_x = num_train_x
-        self.num_true_x = num_true_x
-        self.seed = seed
-        self.img_name = img_name
-        self.save_dir = save_dir
+        self.noise = noise
         self.verbose = verbose
-
-        # Set seed
-        np.random.seed(self.seed)
 
         # Create our data
         self.x_eval = np.linspace(x_min, x_max, num_evals_x)
+    
+    def new_en_solver(self, alpha, _lambda, seed):
+        '''
+        `new_en_solver`
+
+        Creates a new elastic net solve using the given seed
+
+        Parameters
+
+        `alpha`, `_lambda`: Hyperparameters for `ElasticNet`, see `elastic_net.py` for more details
+        `seed`: Numpy seed
+
+        Returns
+
+        Nothing, but sets the current elastic net to this en
+        '''
+
+        # Set numpy seed
+        np.random.seed(seed)
 
         # Create our splits
         self.x_train, self.x_val = self.get_split(self.x_eval, self.num_train_x)
-        self.y_train, self.y_val = (f(self.x_train), f(self.x_val))
+        self.y_train = (self.f(self.x_train) + np.random.normal(scale=self.noise, size=self.x_train.shape))
+        self.y_val = (self.f(self.x_val) + np.random.normal(scale=self.noise, size=self.x_val.shape))
 
         if self.verbose:
             print(f"x_train {self.x_train.shape}, x_val {self.x_val.shape}, num_evals_x {self.num_evals_x}")
             print(f"y_train {self.y_train.shape}, y_val {self.y_val.shape}, num_evals_x {self.num_evals_x}")
 
-        # Create the elastic net solve
-        self.en = ElasticNet(self.x_train, self.y_train, self.degree, self.alpha, self._lambda, verbose=self.verbose)
+        # Create the elastic net solve and set it to the current one
+        en = ElasticNet(self.x_train, self.y_train, self.degree, alpha, _lambda, verbose=self.verbose)
+        self.en = en
 
     def get_split(self, x_eval, num_train_x):
         '''
@@ -156,7 +167,7 @@ class ElasticNetHelper:
         '''
         return self.en.get_b()
     
-    def make_plot(self, train_data = True, val_data = True, f_plot = True, predict_f_plot = True):
+    def make_plot(self, num_true_x = 100, title = 'title', x_axis = 'x', y_axis = 'y', img_name = 'PLOT.pdf', img_dir = '../Images', train_data = True, val_data = True, f_plot = True, predict_f_plot = True):
         '''
         `make_plot`
 
@@ -165,36 +176,57 @@ class ElasticNetHelper:
         Returns nothing, but makes our plot
         '''
 
+        # Plotting colors
+        color1 = '#FF595E'
+        color2 = '#1982C4'
+        color3 = '#6A4C93'
+        color4 = 'green'
+
+        # Construct save path
+        save_path = f"{img_dir}/{img_name}"
+
         # Create helpful data
-        true_x = np.linspace(self.x_min, self.x_max, self.num_true_x)
+        true_x = np.linspace(self.x_min, self.x_max, num_true_x)
         true_y = self.f(true_x)
 
         # Create initial plots
-        fig, ax = plt.subplots(1,1,figsize=(10,8), dpi=120, facecolor='white', tight_layout={'pad': 1})
+        fig, ax = plt.subplots(1,1,figsize=(5,4), dpi=120, facecolor='white', tight_layout={'pad': 1})
 
-        general_marker_style = dict(markersize = 2, markeredgecolor='black', marker='o', markeredgewidth=0)
-        dot_marker_style = dict(markersize = 8, markeredgecolor='black', marker='*', markeredgewidth=0.75)
+        general_marker_style = dict(markersize = 1, markeredgecolor='black', marker='o', markeredgewidth=0)
+        dot_marker_style = dict(markersize = 4, markeredgecolor='black', marker='*', markeredgewidth=0.75)
         data_marker_size = 2
-        scatter_marker_size = 20
+        scatter_marker_size = 10
 
         # Create original function plot
-        ax.plot(true_x, true_y, color='blue', label="Original function", **general_marker_style)
+        if f_plot:
+            ax.plot(true_x, true_y, color=color1, label="Original function", **general_marker_style)
 
         # Create predicted function plot
-        pred_y = self.en.get_prediction(true_x)
-        ax.plot(true_x, pred_y, color='green', label="Elastic Net function", **general_marker_style)
+        if predict_f_plot:
+            pred_y = self.en.get_prediction(true_x)
+            ax.plot(true_x, pred_y, color=color2, label="Elastic Net function", **general_marker_style)
 
         # Plot training data
-        ax.scatter(self.x_train, self.y_train, s=scatter_marker_size, color='red', label=f"Training data")
+        if train_data:
+            ax.scatter(self.x_train, self.y_train, s=scatter_marker_size, color=color3, label=f"Training data")
 
         # Plot validation data
-        ax.scatter(self.x_val, self.y_val, s=scatter_marker_size, color='purple', label=f"Validation data")
+        if val_data:
+            ax.scatter(self.x_val, self.y_val, s=scatter_marker_size, color=color4, label=f"Validation data")
 
-        ax.set_title(f"title")
+        # Add labels
+        if x_axis is not None:
+            ax.set_xlabel(f"{x_axis}")
+        if y_axis is not None:
+            ax.set_ylabel(f"{y_axis}")
+        if title is not None:
+            ax.set_title(f"{title}")
         ax.legend()
-        plt.savefig(f'../Images/test.pdf')
+
+        # Save image
+        plt.savefig(f'{save_path}')
         plt.close()
-        print(f'Saved to: ../Images/test.pdf')
+        print(f'Saved to: {save_path}')
 
     def print_params(self):
         '''
@@ -208,28 +240,18 @@ class ElasticNetHelper:
             "self.degree",
             "self.x_min",
             "self.x_max",
-            "self.alpha",
-            "self._lambda",
             "self.num_evals_x",
             "self.num_train_x",
-            "self.num_true_x",
-            "self.seed",
-            "self.img_name",
-            "self.save_dir",
+            "self.noise",
             "self.verbose"
         ]
         dict_tmp["Description"] = [
             self.degree,
             self.x_min,
             self.x_max,
-            self.alpha,
-            self._lambda,
             self.num_evals_x,
             self.num_train_x,
-            self.num_true_x,
-            self.seed,
-            self.img_name,
-            self.save_dir,
+            self.noise,
             self.verbose
         ]
         print(tabulate(dict_tmp, headers="keys", tablefmt="pretty"))

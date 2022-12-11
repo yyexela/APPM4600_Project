@@ -1,0 +1,227 @@
+#############################
+# 3x+2, alpha 0, lambda 0.1 #
+#############################
+
++------------------+-------------+
+|      Option      | Description |
++------------------+-------------+
+|   self.degree    |      1      |
+|    self.x_min    |     -5      |
+|    self.x_max    |      5      |
+| self.num_evals_x |     20      |
+| self.num_train_x |     10      |
+|    self.noise    |      1      |
+|   self.verbose   |    False    |
++------------------+-------------+
+
+Before training RSS 102.95485687675446
+Before training EN 102.95485687675446
+Before validation RSS 79.89094194631414
+Before validation EN 79.89094194631414
+Before weights
+[4.00203113 0.        ]
+
+Saved to: ../Images/3x+2_a=0_l=0.1.pdf
+After training RSS 9.39375631312942
+After training EN 48.37754821463985
+After validation RSS 4.530388816763933
+After validation EN 43.51418071827436
+After weights
+[2.77892503 8.82992547]
+
+#############################
+# 3x+2, alpha 1, lambda 0.1 #
+#############################
+
++------------------+-------------+
+|      Option      | Description |
++------------------+-------------+
+|   self.degree    |      1      |
+|    self.x_min    |     -5      |
+|    self.x_max    |      5      |
+| self.num_evals_x |     20      |
+| self.num_train_x |     10      |
+|    self.noise    |      1      |
+|   self.verbose   |    False    |
++------------------+-------------+
+
+Before training RSS 102.95485687675446
+Before training EN 102.95485687675446
+Before validation RSS 79.89094194631414
+Before validation EN 79.89094194631414
+Before weights
+[4.00203113 0.        ]
+
+Saved to: ../Images/3x+2_a=1_l=0.1.pdf
+After training RSS 8.62408047509921
+After training EN 18.236998491928922
+After validation RSS 5.374644267348402
+After validation EN 14.987562284178114
+After weights
+[2.67046625 9.61291802]
+
+###########################
+# 3x+2, alpha 0, lambda 0 #
+###########################
+
++------------------+-------------+
+|      Option      | Description |
++------------------+-------------+
+|   self.degree    |      1      |
+|    self.x_min    |     -5      |
+|    self.x_max    |      5      |
+| self.num_evals_x |     20      |
+| self.num_train_x |     10      |
+|    self.noise    |      1      |
+|   self.verbose   |    False    |
++------------------+-------------+
+
+Before training RSS 102.95485687675446
+Before training EN 102.95485687675446
+Before validation RSS 79.89094194631414
+Before validation EN 79.89094194631414
+Before weights
+[4.00203113 0.        ]
+
+Saved to: ../Images/3x+2_a=0_l=0.pdf
+After training RSS 8.614080475099211
+After training EN 55.78446867592683
+After validation RSS 5.5707677221412055
+After validation EN 52.74115592296883
+After weights
+[2.65661442 9.71291802]
+
+############################
+# x^2, alpha 0, lambda 0.1 #
+############################
+
++------------------+-------------+
+|      Option      | Description |
++------------------+-------------+
+|   self.degree    |      5      |
+|    self.x_min    |     -5      |
+|    self.x_max    |      5      |
+| self.num_evals_x |     20      |
+| self.num_train_x |     10      |
+|    self.noise    |      1      |
+|   self.verbose   |    False    |
++------------------+-------------+
+
+Before training RSS 205.03055126191802
+Before training EN 205.03055126191802
+Before validation RSS 100.99587519662362
+Before validation EN 100.99587519662362
+Before weights
+[9.58984277 0.         0.         0.         0.         0.        ]
+
+Saved to: ../Images/x^2_a=0_l=0.1.pdf
+After training RSS 135.77586900295097
+After training EN 154.88141688405912
+After validation RSS 62.62729691323845
+After validation EN 81.7328447943466
+After weights
+[10.47718208  0.10094514  5.58388154  0.04386335  2.58592524 -0.57640213]
+
+############################
+# x^2, alpha 1, lambda 0.1 #
+############################
+
++------------------+-------------+
+|      Option      | Description |
++------------------+-------------+
+|   self.degree    |      5      |
+|    self.x_min    |     -5      |
+|    self.x_max    |      5      |
+| self.num_evals_x |     20      |
+| self.num_train_x |     10      |
+|    self.noise    |      1      |
+|   self.verbose   |    False    |
++------------------+-------------+
+
+Before training RSS 205.03055126191802
+Before training EN 205.03055126191802
+Before validation RSS 100.99587519662362
+Before validation EN 100.99587519662362
+Before weights
+[9.58984277 0.         0.         0.         0.         0.        ]
+
+Saved to: ../Images/x^2_a=1_l=0.1.pdf
+After training RSS 134.9811903319133
+After training EN 143.54238943145992
+After validation RSS 60.1394923158911
+After validation EN 68.70069141543772
+After weights
+[10.47200346  0.          8.36719057 -0.19400853  0.          0.        ]
+
+##########################
+# x^2, alpha 0, lambda 0 #
+##########################
+
++------------------+-------------+
+|      Option      | Description |
++------------------+-------------+
+|   self.degree    |      5      |
+|    self.x_min    |     -5      |
+|    self.x_max    |      5      |
+| self.num_evals_x |     20      |
+| self.num_train_x |     10      |
+|    self.noise    |      1      |
+|   self.verbose   |    False    |
++------------------+-------------+
+
+Before training RSS 205.03055126191802
+Before training EN 205.03055126191802
+Before validation RSS 100.99587519662362
+Before validation EN 100.99587519662362
+Before weights
+[9.58984277 0.         0.         0.         0.         0.        ]
+
+Saved to: ../Images/x^2_a=0_l=0.pdf
+After training RSS 134.927519263412
+After training EN 172.80087382185752
+After validation RSS 61.86133063029352
+After validation EN 99.73468518873905
+After weights
+[10.50823797  1.03157083  8.45084134 -1.74349482 -0.01329106  0.47528997]
+
+###################
+# x^2 matrix plot #
+###################
+
++------------------+-------------+
+|      Option      | Description |
++------------------+-------------+
+|   self.degree    |      5      |
+|    self.x_min    |     -5      |
+|    self.x_max    |      5      |
+| self.num_evals_x |     20      |
+| self.num_train_x |     10      |
+|    self.noise    |      1      |
+|   self.verbose   |    False    |
++------------------+-------------+
+Minimum RSS is 106.69813974038442 with alpha 1.0 and lambda 0.12
+Minimum weights were:
+[ 5.48685493 -0.11709059  7.88897864  0.          0.01397036  0.14636431]
+
+Saved figure to ../Images/x^2_matrix.pdf
+
+##################################
+# 3x+2 matrix plot for 100 seeds #
+##################################
+
++------------------+-------------+
+|      Option      | Description |
++------------------+-------------+
+|   self.degree    |      1      |
+|    self.x_min    |     -5      |
+|    self.x_max    |      5      |
+| self.num_evals_x |     20      |
+| self.num_train_x |     10      |
+|    self.noise    |      1      |
+|   self.verbose   |    False    |
++------------------+-------------+
+Minimum RSS is 13.967857570421854 with alpha 0.0 and lambda 0.0
+Minimum weights were:
+[5.67189648 8.02675339]
+
+Saved figure to ../Images/3x+2_matrix.pdf
