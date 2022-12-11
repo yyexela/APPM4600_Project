@@ -3,7 +3,7 @@ from prints import *
 
 f = lambda x: 3*x+2
 
-for alpha, _lambda in [(0, 0.1), (1, 0.1), (0,0)]:
+for alpha, _lambda in [(0, 0.1), (1, 0.1), (0.5, 0.1), (0,0)]:
 
     small_banner(f"3x+2, alpha {alpha}, lambda {_lambda}", False, True)
 

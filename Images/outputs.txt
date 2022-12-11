@@ -60,6 +60,37 @@ After validation EN 14.987562284178114
 After weights
 [2.67046625 9.61291802]
 
+###############################
+# 3x+2, alpha 0.5, lambda 0.1 #
+###############################
+
++------------------+-------------+
+|      Option      | Description |
++------------------+-------------+
+|   self.degree    |      1      |
+|    self.x_min    |     -5      |
+|    self.x_max    |      5      |
+| self.num_evals_x |     20      |
+| self.num_train_x |     10      |
+|    self.noise    |      1      |
+|   self.verbose   |    False    |
++------------------+-------------+
+
+Before training RSS 102.95485687675446
+Before training EN 102.95485687675446
+Before validation RSS 79.89094194631414
+Before validation EN 79.89094194631414
+Before weights
+[4.00203113 0.        ]
+
+Saved to: ../Images/3x+2_a=0.5_l=0.1.pdf
+After training RSS 8.874322226653215
+After training EN 34.64849738205336
+After validation RSS 4.779493439151857
+After validation EN 30.553668594552
+After weights
+[2.727278   9.20277906]
+
 ###########################
 # 3x+2, alpha 0, lambda 0 #
 ###########################
@@ -152,6 +183,37 @@ After validation RSS 60.1394923158911
 After validation EN 68.70069141543772
 After weights
 [10.47200346  0.          8.36719057 -0.19400853  0.          0.        ]
+
+##############################
+# x^2, alpha 0.5, lambda 0.1 #
+##############################
+
++------------------+-------------+
+|      Option      | Description |
++------------------+-------------+
+|   self.degree    |      5      |
+|    self.x_min    |     -5      |
+|    self.x_max    |      5      |
+| self.num_evals_x |     20      |
+| self.num_train_x |     10      |
+|    self.noise    |      1      |
+|   self.verbose   |    False    |
++------------------+-------------+
+
+Before training RSS 205.03055126191802
+Before training EN 205.03055126191802
+Before validation RSS 100.99587519662362
+Before validation EN 100.99587519662362
+Before weights
+[9.58984277 0.         0.         0.         0.         0.        ]
+
+Saved to: ../Images/x^2_a=0.5_l=0.1.pdf
+After training RSS 135.3413508264912
+After training EN 151.50935931577516
+After validation RSS 61.71274281119387
+After validation EN 77.88075130047784
+After weights
+[10.4843208   0.          6.674979    0.          1.62300606 -0.37352483]
 
 ##########################
 # x^2, alpha 0, lambda 0 #
