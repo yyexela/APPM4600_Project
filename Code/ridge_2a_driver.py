@@ -27,10 +27,21 @@ seed = 50
 
 train_x, train_y, valid_x, valid_y = sample.random_sample_equi(number_of_samples, f, a, b, number_of_train_samples, seed = seed)
 
+fig_initial, ax_initial = plt.subplots(1,1)
+ax_initial.plot(xeval, f(xeval), label = 'f(x) = 3x + 2', color = color3)
+ax_initial.plot(train_x, train_y,'.', color ='green', label = 'Training Data')
+ax_initial.legend()
+ax_initial.set_xlabel('x')
+ax_initial.set_ylabel('y')
+
+if save_plots:
+    plt.savefig("../Images/2a_only_data.pdf")
+else:
+    plt.show()
+
 #make graph for gammas = 0, 0.1, calculate RSS, seed = 50
 gammas_initial = [0,0.1]
 linestyles = ['-', '--']
-fig_initial, ax_initial = plt.subplots(1,1)
 rss_initial = []
 counter = 0
 for gamma in gammas_initial:
@@ -39,11 +50,7 @@ for gamma in gammas_initial:
     rss_initial.append(ridge.RSS(valid_x, valid_y))
     ax_initial.plot(xeval, ridge.predict(xeval),linestyles[counter], label = '$\gamma$ = ' + str(gamma), color = colors[counter])
     counter += 1
-ax_initial.plot(xeval, f(xeval), label = 'f(x) = 3x + 2', color = color3)
-ax_initial.plot(train_x, train_y,'.', color ='green', label = 'Training Data')
 ax_initial.legend()
-ax_initial.set_xlabel('x')
-ax_initial.set_ylabel('y')
 print(rss_initial)
 
 if save_plots:
