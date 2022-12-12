@@ -3,6 +3,9 @@ import matplotlib.pyplot as plt
 import estimators 
 import sample
 
+# Save or show plots
+save_plots = True
+
 #set colors
 color1 = '#FF595E'
 color2 = '#1982C4'
@@ -41,9 +44,13 @@ ax_initial.plot(train_x, train_y,'.', color ='green', label = 'Training Data')
 ax_initial.legend()
 ax_initial.set_xlabel('x')
 ax_initial.set_ylabel('y')
-ax_initial.set_title('Fitted Curves and Real Function for initial $\gamma$\'s, seed = 50')
 print(rss_initial)
-plt.show()
+
+if save_plots:
+    plt.savefig("../Images/2b_initial_gammas.pdf")
+else:
+    plt.show()
+plt.close()
 
 #make RSS graph for gammas between 0 and 50 for seed = 50
 gammas_log = np.linspace(0,50,1000)
@@ -54,10 +61,14 @@ for gamma in gammas_log:
     ridge.fit(train_x, train_y)
     rss_log10.append(ridge.RSS(valid_x, valid_y))
 ax_log10.plot(gammas_log, rss_log10, color = color2)
-ax_log10.set_title('Residual Sum of Squares for various $\gamma$\'s, seed = 50')
 ax_log10.set_xlabel('$\gamma$')
 ax_log10.set_ylabel('Residual Sum of Squares')
-plt.show()
+
+if save_plots:
+    plt.savefig("../Images/2b_seed50_gammas.pdf")
+else:
+    plt.show()
+plt.close()
 
 #Make RSS graph for gammas between 0 and 50 for seeds 1-100
 fig, ax = plt.subplots(1,1)
@@ -79,9 +90,13 @@ for i in range(len(seed_list)):
 
 ax.set_xlabel('$\gamma$')
 ax.set_ylabel('log10 of Residual Sum of Squares')
-ax.set_title('Residual Sum of Squares vs $\gamma$ for seeds 1-100')
 ax.set_yscale('log')
-plt.show()
+
+if save_plots:
+    plt.savefig("../Images/2b_seeds1_100.pdf")
+else:
+    plt.show()
+plt.close()
 
 # Calculate mean and stdev across different seeds
 means = np.mean(mean_std_mat,axis=0)
@@ -97,9 +112,12 @@ plt.fill_between(gammas, means-stdevs,\
 plt.semilogy()
 plt.xlabel('$\gamma$')
 plt.ylabel('log10 of Residual Sum of Squares')
-plt.title('Mean and Standard Deviation of RSS vs $\gamma$ for seeds 1-100')
 plt.legend()
-plt.show()
+
+if save_plots:
+    plt.savefig("../Images/2b_seeds1_100mean.pdf")
+else:
+    plt.show()
 plt.close()
 
 nonzero_gammas_count = np.count_nonzero(gammas_best)
